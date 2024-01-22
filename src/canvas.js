@@ -21,20 +21,26 @@ window.addEventListener("load", () => {
   //   ctx.stroke();
 
   // Example graph nodes and edges
-  var nodes = [
+  let nodes = [
     { x: 100, y: 100 },
     { x: 300, y: 300 },
     { x: 500, y: 100 },
   ];
-  var edges = [
+  let edges = [
     [0, 1],
     [1, 2],
   ];
+  const radiusX = 30;
+  const radiusY = 20;
+
+  // To ensure that the edges of the graph only touch the ellipse
+  // and don't go inside it, you need to calculate the intersection points between
+  // the edges and the ellipses. This involves some geometry, as you have to find the
+  // point where the line (representing the edge) touches the ellipse (representing the node)
+  // without intersecting it.
 
   // Function to draw nodes as ellipses
   function drawNode(node) {
-    const radiusX = 50; // radius for the x-axis
-    const radiusY = 20; // radius for the y-axis
     ctx.beginPath();
     ctx.ellipse(node.x, node.y, radiusX, radiusY, 0, 0, 2 * Math.PI);
     ctx.fillStyle = "blue";
@@ -44,11 +50,24 @@ window.addEventListener("load", () => {
     ctx.stroke();
   }
 
+  // Adjust edge to touch the ellipse
+  function adjustEdge(node1, node2) {
+    let dx = node2.x - node1.x;
+    let dy = node2.y - node1.y;
+    let angle = Math.atan2(dy, dx);
+    let adjustX = Math.cos(angle) * radiusX;
+    let adjustY = Math.sin(angle) * radiusY;
+    return { x: node1.x + adjustX, y: node1.y + adjustY };
+  }
+
   // Function to draw edges
   function drawEdge(node1, node2) {
+    let adjustedStart = adjustEdge(node1, node2);
+    let adjustedEnd = adjustEdge(node2, node1);
+
     ctx.beginPath();
-    ctx.moveTo(node1.x, node1.y);
-    ctx.lineTo(node2.x, node2.y);
+    ctx.moveTo(adjustedStart.x, adjustedStart.y);
+    ctx.lineTo(adjustedEnd.x, adjustedEnd.y);
     ctx.strokeStyle = "black";
     ctx.stroke();
   }
@@ -56,8 +75,8 @@ window.addEventListener("load", () => {
   // Render the graph
   nodes.forEach(drawNode);
   edges.forEach((edge) => {
-    var node1 = nodes[edge[0]];
-    var node2 = nodes[edge[1]];
+    let node1 = nodes[edge[0]];
+    let node2 = nodes[edge[1]];
     drawEdge(node1, node2);
   });
 });
