@@ -5,8 +5,8 @@ window.addEventListener("load", () => {
   const ctx = canvas.getContext("2d");
 
   // resizing
-  canvas.height = window.innerHeight;
-  canvas.width = window.innerWidth;
+  canvas.height = 500; // window.innerHeight;
+  canvas.width = 700; // window.innerWidth;
 
   // Example graph nodes and edges
   let nodes = [
@@ -18,6 +18,10 @@ window.addEventListener("load", () => {
     [0, 1],
     [1, 2],
   ];
+
+  // Slider element
+  let offsetSlider = document.getElementById("offsetRange");
+
   const radiusX = 30;
   const radiusY = 20;
 
@@ -43,33 +47,43 @@ window.addEventListener("load", () => {
     return { x: node1.x + adjustX, y: node1.y + adjustY };
   }
 
-  // Function to draw edges as Quadratic Bezier curves with more pronounced curvature
-  function drawEdge(node1, node2) {
-    let adjustedStart = adjustEdge(node1, node2);
-    let adjustedEnd = adjustEdge(node2, node1);
+// Function to draw edges as Quadratic Bezier curves with consistent curvature
+function drawEdge(node1, node2, offset) {
+    var adjustedStart = adjustEdge(node1, node2);
+    var adjustedEnd = adjustEdge(node2, node1);
 
     // Calculate the midpoint
-    let midX = (adjustedStart.x + adjustedEnd.x) / 2;
-    let midY = (adjustedStart.y + adjustedEnd.y) / 2;
+    var midX = (adjustedStart.x + adjustedEnd.x) / 2;
+    var midY = (adjustedStart.y + adjustedEnd.y) / 2;
 
     // Control point for the quadratic Bezier curve
-    // Increase the offset to make the curve more pronounced
-    let offset = 160; // Adjust this value to make the curve more or less pronounced
-    let cp1x = midX + Math.random() * offset - offset / 2;
-    let cp1y = midY + Math.random() * offset - offset / 2;
+    // Offset determines the height of the curve
+    var cp1x = midX;
+    var cp1y = midY - offset; // Move the control point up or down based on the offset
 
     ctx.beginPath();
     ctx.moveTo(adjustedStart.x, adjustedStart.y);
     ctx.quadraticCurveTo(cp1x, cp1y, adjustedEnd.x, adjustedEnd.y);
-    ctx.strokeStyle = "black";
+    ctx.strokeStyle = 'black';
     ctx.stroke();
+}
+
+
+  // Function to redraw the graph
+  function redrawGraph() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+    nodes.forEach(drawNode); // Redraw nodes
+    let offset = parseInt(offsetSlider.value, 10);
+    edges.forEach((edge) => {
+      let node1 = nodes[edge[0]];
+      let node2 = nodes[edge[1]];
+      drawEdge(node1, node2, offset);
+    });
   }
 
-  // Render the graph
-  nodes.forEach(drawNode);
-  edges.forEach((edge) => {
-    let node1 = nodes[edge[0]];
-    let node2 = nodes[edge[1]];
-    drawEdge(node1, node2);
-  });
+  // Event listener for the slider
+  offsetSlider.addEventListener("input", redrawGraph);
+
+  // Initial drawing
+  redrawGraph();
 });

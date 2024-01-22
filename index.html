@@ -1,13 +1,23 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Aesthetic</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="style.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <canvas id="canvas"></canvas>
+    <div style="display: flex; flex-direction: column;">
+      <label for="offsetRange">Control Point Offset: </label>
+      <input
+        class="slider"
+        type="range"
+        id="offsetRange"
+        min="-100"
+        max="100"
+        value="0"
+      />
+    </div>
     <script src="src/canvas.js"></script>
-    <!-- <script src="src/index.js"></script> -->
-</body>
+  </body>
 </html>
