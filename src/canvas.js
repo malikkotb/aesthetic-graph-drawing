@@ -8,18 +8,6 @@ window.addEventListener("load", () => {
   canvas.height = window.innerHeight;
   canvas.width = window.innerWidth;
 
-  //   // Draw a quadratic Bezier curve
-  //   ctx.beginPath();
-  //   ctx.moveTo(50, 300); // Start point
-  //   ctx.quadraticCurveTo(250, 100, 650, 300); // Control point and end point
-  //   ctx.stroke();
-
-  //   // Draw a cubic Bezier curve
-  //   ctx.beginPath();
-  //   ctx.moveTo(50, 100); // Start point
-  //   ctx.bezierCurveTo(150, 0, 350, 200, 450, 100); // Control points and end point
-  //   ctx.stroke();
-
   // Example graph nodes and edges
   let nodes = [
     { x: 100, y: 100 },
@@ -33,12 +21,6 @@ window.addEventListener("load", () => {
   const radiusX = 30;
   const radiusY = 20;
 
-  // To ensure that the edges of the graph only touch the ellipse
-  // and don't go inside it, you need to calculate the intersection points between
-  // the edges and the ellipses. This involves some geometry, as you have to find the
-  // point where the line (representing the edge) touches the ellipse (representing the node)
-  // without intersecting it.
-
   // Function to draw nodes as ellipses
   function drawNode(node) {
     ctx.beginPath();
@@ -51,6 +33,7 @@ window.addEventListener("load", () => {
   }
 
   // Adjust edge to touch the ellipse
+  // TODO: explain this function (how to calculate intersections of node and edge)
   function adjustEdge(node1, node2) {
     let dx = node2.x - node1.x;
     let dy = node2.y - node1.y;
@@ -60,14 +43,24 @@ window.addEventListener("load", () => {
     return { x: node1.x + adjustX, y: node1.y + adjustY };
   }
 
-  // Function to draw edges
+  // Function to draw edges as Quadratic Bezier curves with more pronounced curvature
   function drawEdge(node1, node2) {
     let adjustedStart = adjustEdge(node1, node2);
     let adjustedEnd = adjustEdge(node2, node1);
 
+    // Calculate the midpoint
+    let midX = (adjustedStart.x + adjustedEnd.x) / 2;
+    let midY = (adjustedStart.y + adjustedEnd.y) / 2;
+
+    // Control point for the quadratic Bezier curve
+    // Increase the offset to make the curve more pronounced
+    let offset = 160; // Adjust this value to make the curve more or less pronounced
+    let cp1x = midX + Math.random() * offset - offset / 2;
+    let cp1y = midY + Math.random() * offset - offset / 2;
+
     ctx.beginPath();
     ctx.moveTo(adjustedStart.x, adjustedStart.y);
-    ctx.lineTo(adjustedEnd.x, adjustedEnd.y);
+    ctx.quadraticCurveTo(cp1x, cp1y, adjustedEnd.x, adjustedEnd.y);
     ctx.strokeStyle = "black";
     ctx.stroke();
   }
