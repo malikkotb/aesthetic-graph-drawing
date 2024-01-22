@@ -8,16 +8,11 @@
   <body>
     <canvas id="canvas"></canvas>
     <div style="display: flex; flex-direction: column;">
-      <label for="offsetRange">Control Point Offset: </label>
-      <input
-        class="slider"
-        type="range"
-        id="offsetRange"
-        min="-100"
-        max="100"
-        value="0"
-      />
-    </div>
+        <label for="offsetRange1">Control Point Offset for Edge 1: </label>
+        <input class="slider" type="range" id="offsetRange1" min="-100" max="100" value="0">
+    
+        <label for="offsetRange2">Control Point Offset for Edge 2: </label>
+        <input class="slider" type="range" id="offsetRange2" min="-100" max="100" value="0">
     <script src="src/canvas.js"></script>
   </body>
 </html>
