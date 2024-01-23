@@ -49,13 +49,13 @@ window.addEventListener("load", () => {
 
   function drawArrowhead(ctx, x, y, radians) {
     let arrowLength = 10; // Length of the arrow
-    let arrowWidth = 5; // Width of the base of the arrow
+    let arrowWidth = 4; // Width of the base of the arrow
 
     ctx.save();
     ctx.beginPath();
     ctx.translate(x, y);
     ctx.rotate(radians);
-    ctx.moveTo(0, 0);
+    ctx.moveTo(0, 0); // tip of arrow
     ctx.lineTo(-arrowWidth, -arrowLength);
     ctx.lineTo(arrowWidth, -arrowLength);
     ctx.closePath();
@@ -65,20 +65,15 @@ window.addEventListener("load", () => {
   }
 
   // Updated function to draw edges as Quadratic Bezier curves
-  function drawEdge(node1, node2, edgeIndex) {
-    let adjustedStart = adjustEdge(node1, node2);
-    let adjustedEnd = adjustEdge(node2, node1);
+  function drawEdge(node1, node2, offset, arrowPosition) {
+    var adjustedStart = adjustEdge(node1, node2);
+    var adjustedEnd = adjustEdge(node2, node1);
 
-    let offset =
-      edgeIndex === 0
-        ? parseInt(offsetSlider1.value, 10)
-        : parseInt(offsetSlider2.value, 10);
+    var midX = (adjustedStart.x + adjustedEnd.x) / 2;
+    var midY = (adjustedStart.y + adjustedEnd.y) / 2;
 
-    let midX = (adjustedStart.x + adjustedEnd.x) / 2;
-    let midY = (adjustedStart.y + adjustedEnd.y) / 2;
-
-    let cp1x = midX;
-    let cp1y = midY - offset;
+    var cp1x = midX;
+    var cp1y = midY - offset;
 
     ctx.beginPath();
     ctx.moveTo(adjustedStart.x, adjustedStart.y);
@@ -86,11 +81,29 @@ window.addEventListener("load", () => {
     ctx.strokeStyle = "black";
     ctx.stroke();
 
-    // Draw an arrow at the end of the first curve
-    if (edgeIndex === 0) {
-      // Calculate angle of the line at the end point for the arrow
-      let angle = Math.atan2(adjustedEnd.y - cp1y, adjustedEnd.x - cp1x);
-      drawArrowhead(ctx, adjustedEnd.x, adjustedEnd.y, angle - Math.PI / 2);
+    // Calculate the angle for the arrowhead
+    var angleAtEnd = Math.atan2(adjustedEnd.y - cp1y, adjustedEnd.x - cp1x);
+    var angleAtStart = Math.atan2(
+      adjustedStart.y - cp1y,
+      adjustedStart.x - cp1x
+    );
+
+    // Draw arrow at the specified positions
+    if (arrowPosition === "start" || arrowPosition === "both") {
+      drawArrowhead(
+        ctx,
+        adjustedStart.x,
+        adjustedStart.y,
+        angleAtStart - Math.PI / 2
+      );
+    }
+    if (arrowPosition === "end" || arrowPosition === "both") {
+      drawArrowhead(
+        ctx,
+        adjustedEnd.x,
+        adjustedEnd.y,
+        angleAtEnd - Math.PI / 2
+      );
     }
   }
 
@@ -99,9 +112,13 @@ window.addEventListener("load", () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     nodes.forEach(drawNode);
     edges.forEach((edge, index) => {
-      let node1 = nodes[edge[0]];
-      let node2 = nodes[edge[1]];
-      drawEdge(node1, node2, index);
+      var node1 = nodes[edge[0]];
+      var node2 = nodes[edge[1]];
+      var offset = parseInt(
+        index === 0 ? offsetSlider1.value : offsetSlider2.value,
+        10
+      );
+      drawEdge(node1, node2, offset, "end"); // Change "end" to "start", "both", or other logic as needed
     });
   }
 
