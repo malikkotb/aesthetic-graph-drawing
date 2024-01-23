@@ -30,10 +30,9 @@ window.addEventListener("load", () => {
   function drawNode(node) {
     ctx.beginPath();
     ctx.ellipse(node.x, node.y, radiusX, radiusY, 0, 0, 2 * Math.PI);
-    ctx.fillStyle = "blue";
     ctx.stroke();
     ctx.lineWidth = 2;
-    ctx.strokeStyle = "#003300";
+    ctx.strokeStyle = "red";
     ctx.stroke();
   }
 
@@ -48,13 +47,30 @@ window.addEventListener("load", () => {
     return { x: node1.x + adjustX, y: node1.y + adjustY };
   }
 
-  // Function to draw edges as Quadratic Bezier curves with consistent curvature
+  function drawArrowhead(ctx, x, y, radians) {
+    let arrowLength = 10; // Length of the arrow
+    let arrowWidth = 5; // Width of the base of the arrow
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.translate(x, y);
+    ctx.rotate(radians);
+    ctx.moveTo(0, 0);
+    ctx.lineTo(-arrowWidth, -arrowLength);
+    ctx.lineTo(arrowWidth, -arrowLength);
+    ctx.closePath();
+    ctx.fillStyle = "black";
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Updated function to draw edges as Quadratic Bezier curves
   function drawEdge(node1, node2, edgeIndex) {
     let adjustedStart = adjustEdge(node1, node2);
     let adjustedEnd = adjustEdge(node2, node1);
 
     let offset =
-      edgeIndex === 1
+      edgeIndex === 0
         ? parseInt(offsetSlider1.value, 10)
         : parseInt(offsetSlider2.value, 10);
 
@@ -69,6 +85,13 @@ window.addEventListener("load", () => {
     ctx.quadraticCurveTo(cp1x, cp1y, adjustedEnd.x, adjustedEnd.y);
     ctx.strokeStyle = "black";
     ctx.stroke();
+
+    // Draw an arrow at the end of the first curve
+    if (edgeIndex === 0) {
+      // Calculate angle of the line at the end point for the arrow
+      let angle = Math.atan2(adjustedEnd.y - cp1y, adjustedEnd.x - cp1x);
+      drawArrowhead(ctx, adjustedEnd.x, adjustedEnd.y, angle - Math.PI / 2);
+    }
   }
 
   // Function to redraw the graph
