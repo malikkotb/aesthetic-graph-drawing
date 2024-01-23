@@ -5,7 +5,7 @@ window.addEventListener("load", () => {
   const ctx = canvas.getContext("2d");
 
   // resizing
-  canvas.height = 500; // window.innerHeight;
+  canvas.height = 400; // window.innerHeight;
   canvas.width = 700; // window.innerWidth;
 
   // Example graph nodes and edges

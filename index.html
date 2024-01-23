@@ -3,6 +3,7 @@
   <head>
     <title>Aesthetic</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/fabric"></script>
   </head>
   <body>
     <canvas id="canvas"></canvas>
@@ -13,6 +14,8 @@
         <label for="offsetRange2">Control Point Offset for Edge 2: </label>
         <input class="slider" type="range" id="offsetRange2" min="-100" max="100" value="0">
     <script src="src/canvas.js"></script>
+    <canvas id="c" width="800" height="600"></canvas>
+    <script src="src/fabricCanvas.js"></script> 
     <script type="module" src="src/search.js"></script>
   </body>
 </html>
