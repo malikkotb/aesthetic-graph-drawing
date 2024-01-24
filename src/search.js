@@ -21,6 +21,7 @@ function a_star(graph, startNode, targetNode) {
 
 
         if (current === targetNode) // path has been found
+            // draw edge to node
             return
 
         

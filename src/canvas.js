@@ -5,10 +5,10 @@ window.addEventListener("load", () => {
   const ctx = canvas.getContext("2d");
 
   // resizing
-  canvas.height = 400; // window.innerHeight;
-  canvas.width = 700; // window.innerWidth;
+  canvas.height = 1000; // window.innerHeight;
+  canvas.width = 1000; // window.innerWidth;
 
-  // Example graph nodes and edges
+  // deafult graph nodes and edges
   let nodes = [
     { x: 100, y: 100 },
     { x: 300, y: 300 },
@@ -18,10 +18,6 @@ window.addEventListener("load", () => {
     [0, 1],
     [1, 2],
   ];
-
-  // Slider elements
-  let offsetSlider1 = document.getElementById("offsetRange1");
-  let offsetSlider2 = document.getElementById("offsetRange2");
 
   const radiusX = 30;
   const radiusY = 20;
@@ -34,6 +30,11 @@ window.addEventListener("load", () => {
     ctx.lineWidth = 2;
     ctx.strokeStyle = "red";
     ctx.stroke();
+
+    // draw label
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(node.label, node.x, node.y);
   }
 
   // Adjust edge to touch the ellipse
@@ -107,6 +108,27 @@ window.addEventListener("load", () => {
     }
   }
 
+  // 100,850,London; 300,800,Paris; 500,700,Berlin; 500,400,Rome; 200,300,Madrid; 700,200,Athens; 100,200,Lisbon; 700,800,Warsaw
+  // 0,1; 1,2; 2,3; 3,4; 4,5; 5,6; 6,7; 0,3; 1,4; 2,5
+
+  function createSlidersForEdges() {
+    const sliderContainer = document.getElementById("sliderParent");
+    sliderContainer.innerHTML = ""; // Clear existing sliders
+
+    edges.forEach((edge, index) => {
+      const slider = document.createElement("input");
+      slider.type = "range";
+      slider.id = "edgeSlider" + index;
+      slider.min = "-300";
+      slider.max = "300";
+      slider.value = "0"; // Default value
+
+      slider.addEventListener("input", redrawGraph);
+
+      sliderContainer.appendChild(slider);
+    });
+  }
+
   // Function to redraw the graph
   function redrawGraph() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -114,19 +136,12 @@ window.addEventListener("load", () => {
     edges.forEach((edge, index) => {
       var node1 = nodes[edge[0]];
       var node2 = nodes[edge[1]];
-      var offset = parseInt(
-        index === 0 ? offsetSlider1.value : offsetSlider2.value,
-        10
-      );
+
+      const slider = document.getElementById("edgeSlider" + index);
+      const offset = parseInt(slider.value, 10);
       drawEdge(node1, node2, offset, "end"); // Change "end" to "start", "both", or other logic as needed
     });
   }
-
-  // Event listeners for the sliders
-  offsetSlider1.addEventListener("input", redrawGraph);
-  offsetSlider2.addEventListener("input", redrawGraph);
-
-  redrawGraph();
 
   document
     .getElementById("updateButton")
@@ -142,13 +157,19 @@ window.addEventListener("load", () => {
     let nodeInput = document.getElementById("nodeInput").value;
     let edgeInput = document.getElementById("edgeInput").value;
 
-    nodes = nodeInput.split(";").map((pair) => {
-      let [x, y] = pair.split(",").map(Number);
-      return { x, y };
+    nodes = nodeInput.split(";").map((entry) => {
+      let [x, y, label] = entry.split(",");
+      x = Number(x);
+      y = Number(y);
+      if (isNaN(x) || isNaN(y)) {
+        throw new Error("Invalid node coordinates");
+      }
+      return { x, y, label };
     });
 
     edges = edgeInput.split(";").map((pair) => pair.split(",").map(Number));
-
+    
+    createSlidersForEdges();
     redrawGraph();
   }
 });
