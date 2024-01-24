@@ -128,10 +128,17 @@ window.addEventListener("load", () => {
 
   redrawGraph();
 
-  document.getElementById('updateButton').addEventListener('click', updateGraph);
+  document
+    .getElementById("updateButton")
+    .addEventListener("click", updateGraph);
+
+  // Simple node configration: 100,100; 200,150; 300,100; 400,200
+  // this would be: 4 nodes with corresponding (x,y) coordinates
+
+  // Simple edge configuration: 0,1; 1,2; 2,3
+  // represents 3 edges, an edge from node 0 to node 1, from node 1 to node 2, and from node 2 to node 3.
 
   function updateGraph() {
-    
     let nodeInput = document.getElementById("nodeInput").value;
     let edgeInput = document.getElementById("edgeInput").value;
 
