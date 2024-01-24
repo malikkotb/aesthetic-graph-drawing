@@ -127,4 +127,21 @@ window.addEventListener("load", () => {
   offsetSlider2.addEventListener("input", redrawGraph);
 
   redrawGraph();
+
+  document.getElementById('updateButton').addEventListener('click', updateGraph);
+
+  function updateGraph() {
+    
+    let nodeInput = document.getElementById("nodeInput").value;
+    let edgeInput = document.getElementById("edgeInput").value;
+
+    nodes = nodeInput.split(";").map((pair) => {
+      let [x, y] = pair.split(",").map(Number);
+      return { x, y };
+    });
+
+    edges = edgeInput.split(";").map((pair) => pair.split(",").map(Number));
+
+    redrawGraph();
+  }
 });

@@ -6,6 +6,10 @@
     <script src="https://cdn.jsdelivr.net/npm/fabric"></script>
   </head>
   <body>
+    <textarea id="nodeInput" placeholder="Enter nodes as x,y; x,y; ..."></textarea>
+    <textarea id="edgeInput" placeholder="Enter edges as startIndex,endIndex; startIndex,endIndex; ..."></textarea>
+    <button id="updateButton">Update Graph</button>
+
     <canvas id="canvas"></canvas>
     <div style="display: flex; flex-direction: column;">
         <label for="offsetRange1">Control Point Offset for Edge 1: </label>
