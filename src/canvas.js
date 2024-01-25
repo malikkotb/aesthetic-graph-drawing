@@ -119,8 +119,8 @@ window.addEventListener("load", () => {
       const slider = document.createElement("input");
       slider.type = "range";
       slider.id = "edgeSlider" + index;
-      slider.min = "-300";
-      slider.max = "300";
+      slider.min = "-1000";
+      slider.max = "1000";
       slider.value = "0"; // Default value
 
       slider.addEventListener("input", redrawGraph);
