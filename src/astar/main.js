@@ -20,53 +20,34 @@ window.addEventListener("load", () => {
     .getElementById("updateButton")
     .addEventListener("click", updateGraph);
 
-  const radiusX = 30;
-  const radiusY = 20;
-
   function drawNode(node) {
-    ctx.beginPath();
-    ctx.ellipse(node.x, node.y, radiusX, radiusY, 0, 0, 2 * Math.PI);
-    ctx.stroke();
-    ctx.lineWidth = 2;
+    const { x, y, width, height } = node;
     ctx.strokeStyle = "red";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(x, y, width, height, [15]);
     ctx.stroke();
-
-    // draw label
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(node.label, node.x, node.y);
   }
 
   function updateGraph() {
     let nodeInput = document.getElementById("nodeInput").value;
-    // let edgeInput = document.getElementById("edgeInput").value;
 
     let nodes = nodeInput.split(";").map((entry) => {
-      let [x, y, label] = entry.split(",");
-      x = Number(x);
-      y = Number(y);
-      if (isNaN(x) || isNaN(y)) {
-        throw new Error("Invalid node coordinates");
+      let [x, y, width, height] = entry.split(",").map(Number);
+      if (isNaN(x) || isNaN(y) || isNaN(width) || isNaN(height)) {
+        throw new Error("Invalid node input");
       }
-      return { x, y, label };
+      return { x, y, width, height };
     });
 
-    // let edges = edgeInput.split(";").map((pair) => pair.split(",").map(Number));
-    let edges = []
-    redrawGraph(nodes, edges);
+    redrawGraph(nodes);
   }
 
   // Function to draw the graph
-  function redrawGraph(nodes, edges) {
+  function redrawGraph(nodes) {
     // ctx.clearRect(0, 0, canvas.width, canvas.height);
-    nodes.forEach(drawNode);
-    edges.forEach((edge, index) => {
-      var node1 = nodes[edge[0]];
-      var node2 = nodes[edge[1]];
+    nodes.forEach((node) => drawNode(node));
 
-      const slider = document.getElementById("edgeSlider" + index);
-      const offset = parseInt(slider.value, 10);
-      drawEdge(node1, node2, offset, "end"); // Change "end" to "start", "both", or other logic as needed
-    });
+    // edges.forEach((edge, index) => {}); // draw edges
   }
 });
