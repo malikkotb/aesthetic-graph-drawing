@@ -13,18 +13,38 @@ export class Cell {
     this.fCost = Infinity; // Total cost (gCost + hCost)
   }
 
-  draw(ctx, cellWidth, cellHeight) {
+  draw(ctx, cellWidth, cellHeight, marked) {
     let xPosition = this.x * cellWidth;
     let yPosition = this.y * cellHeight;
     // fill the cell
-    ctx.beginPath();
-    ctx.fillStyle = this.walkable ? "green" : "black";
-    ctx.fillRect(xPosition, yPosition, cellWidth, cellHeight);
+    // ctx.beginPath();
+    let color = "white";
+    switch (marked) {
+      case "START":
+        color = "orange";
+        break;
+      case "END":
+        color = "blue";
+        break;
+      case "OPEN":
+        color = "GREEN";
+        break;
+      case "CLOSED":
+        color = "RED";
+        break;
+      case "OBSTACLE":
+        color = "black";
+        break;
+      default:
+        break;
+    }
+    // ctx.fillStyle = color;
+    // ctx.fillRect(xPosition, yPosition, cellWidth, cellHeight);
 
-     // border
-     ctx.strokeStyle = 'white';
-     ctx.lineWidth = 1; 
-     ctx.strokeRect(xPosition, yPosition, cellWidth, cellHeight);
+    // border
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(xPosition, yPosition, cellWidth, cellHeight);
   }
 
   // function to calculate costs (g, h, f)
