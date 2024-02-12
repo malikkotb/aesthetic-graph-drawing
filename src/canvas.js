@@ -139,7 +139,7 @@ window.addEventListener("load", () => {
 
       const slider = document.getElementById("edgeSlider" + index);
       const offset = parseInt(slider.value, 10);
-      drawEdge(node1, node2, offset, "end"); // Change "end" to "start", "both", or other logic as needed
+      // drawEdge(node1, node2, offset, "end"); // Change "end" to "start", "both", or other logic as needed
     });
   }
 
@@ -155,7 +155,7 @@ window.addEventListener("load", () => {
 
   function updateGraph() {
     let nodeInput = document.getElementById("nodeInput").value;
-    let edgeInput = document.getElementById("edgeInput").value;
+    // let edgeInput = document.getElementById("edgeInput").value;
 
     nodes = nodeInput.split(";").map((entry) => {
       let [x, y, label] = entry.split(",");

@@ -11,28 +11,20 @@ window.addEventListener("load", () => {
   const gridHeight = 10; // 10 cells height
   const gridWidth = 10; // 10 cells width
 
-  let grid = new Grid(gridWidth, gridHeight); // Create the grid
-  grid.render(ctx); // Render the grid
+  let nodeCoordinates = []
 
   // get state and edge configuration from input
-
   document
     .getElementById("updateButton")
     .addEventListener("click", updateGraph);
 
-  function drawNode(node) {
-    const { x, y, width, height } = node;
-    ctx.strokeStyle = "red";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.roundRect(x, y, width, height, [15]);
-    ctx.stroke();
-  }
-
   function updateGraph() {
     let nodeInput = document.getElementById("nodeInput").value;
-
     let nodes = nodeInput.split(";").map((entry) => {
+      // x = x-axis coordinate of the rectangle's starting point, in pixels. (top left corner of node)
+      // y = y-axis coordinate of the rectangle's starting point, in pixels. (top left corner of node)
+      // width = rectangle's width. Positive values are to the right, and negative to the left.
+      // height = rectangle's height. Positive values are down, and negative are up.
       let [x, y, width, height] = entry.split(",").map(Number);
       if (isNaN(x) || isNaN(y) || isNaN(width) || isNaN(height)) {
         throw new Error("Invalid node input");
@@ -40,7 +32,17 @@ window.addEventListener("load", () => {
       return { x, y, width, height };
     });
 
+    nodeCoordinates = nodes;
+    console.log("updateGraph main, nodeCoords: ", nodeCoordinates);
+
+    
+    // GRID
+    let grid = new Grid(ctx, gridWidth, gridHeight, nodeCoordinates); // Create the grid
+
+
+    // draw nodes
     redrawGraph(nodes);
+    
   }
 
   // Function to draw the graph
@@ -49,5 +51,14 @@ window.addEventListener("load", () => {
     nodes.forEach((node) => drawNode(node));
 
     // edges.forEach((edge, index) => {}); // draw edges
+  }
+
+  function drawNode(node) {
+    const { x, y, width, height } = node;
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(x, y, width, height, [15]);
+    ctx.stroke();
   }
 });
