@@ -20,7 +20,7 @@ window.addEventListener("load", () => {
 
   function updateGraph() {
     let nodeInput = document.getElementById("nodeInput").value;
-    let nodes = nodeInput.split(";").map((entry) => {
+    nodeCoordinates = nodeInput.split(";").map((entry) => {
       // x = x-axis coordinate of the rectangle's starting point, in pixels. (top left corner of node)
       // y = y-axis coordinate of the rectangle's starting point, in pixels. (top left corner of node)
       // width = rectangle's width. Positive values are to the right, and negative to the left.
@@ -32,16 +32,13 @@ window.addEventListener("load", () => {
       return { x, y, width, height };
     });
 
-    nodeCoordinates = nodes;
     console.log("updateGraph main, nodeCoords: ", nodeCoordinates);
 
-    
     // GRID
     let grid = new Grid(ctx, gridWidth, gridHeight, nodeCoordinates); // Create the grid
 
-
     // draw nodes
-    redrawGraph(nodes);
+    redrawGraph(nodeCoordinates);
     
   }
 

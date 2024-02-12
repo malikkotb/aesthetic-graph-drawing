@@ -3,18 +3,17 @@
 // A cell can have two states: walkable or not-walkable (so an obstacle)
 
 export class Cell {
-  constructor(context, x, y, width, height, walkable, marked) {
+  constructor(context, x, y, width, height, marked) {
     // position of cell in the grid
     this.x = x; // X coordinate
     this.y = y; // Y coordinate
-    this.walkable = walkable; // Whether the cell is an obstacle
-    this.marked = marked;
+    this.marked = marked; // status of cell
     this.parent = null; // Parent cell in the path
     this.gCost = Infinity; // Cost from the start node
     this.hCost = Infinity; // Heuristic cost to the end node
     this.fCost = Infinity; // Total cost (gCost + hCost)
 
-    this.draw(context, width, height, walkable)
+    this.draw(context, width, height, marked)
 
   }
 
@@ -38,7 +37,7 @@ export class Cell {
         color = "RED";
         break;
       case "OBSTACLE":
-        color = "black";
+        color = "gray";
         break;
       default:
         break;
