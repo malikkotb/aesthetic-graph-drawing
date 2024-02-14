@@ -49,27 +49,43 @@ export class Grid {
             height: nodeHeight,
           } = node;
 
-          // Calculate cell corners
-          const cellTopLeft = {x: cellX, y: cellY};
-          const cellTopRight = {x: cellX + 10, y: cellY};
-          const cellBottomLeft = {x: cellX, y: cellY + 10};
-          const cellBottomRight = {x: cellX + 10, y: cellY + 10};
+          // Calculate the center of the current cell
+          const cellCenterX = cellX + 5; // assuming each cell is 10 units in width
+          const cellCenterY = cellY + 5; // assuming each cell is 10 units in height
 
-          // Check if any cell corner falls within the node
-          const corners = [cellTopLeft, cellTopRight, cellBottomLeft, cellBottomRight];
-          const withinNode = corners.some(corner => {
-              return corner.x >= nodeX/10 && corner.x <= (nodeX + nodeWidth)/10 &&
-                    corner.y >= nodeY/10 && corner.y <= (nodeY + nodeHeight) /10;
-          });
 
-          if (withinNode) {
-            console.log("");
-              console.log("cellTopLeft", cellTopLeft);
-              console.log(cellTopLeft.x > nodeX/10);
-              console.log("nodeX ", nodeX/10);
+          const cellRight = cellX + 10; // Assuming cellSize is 10
+          const cellBottom = cellY + 10;
+
+          // Check if any part of the node intersects with the cell's area
+          if (nodeX/10 < cellRight && (nodeX + nodeWidth)/10 > cellX 
+          && nodeY/10 < cellBottom && (nodeY + nodeHeight)/10 > cellY) {
+                console.log("object");
               marked = "OBSTACLE";
           }
 
+            // Check if the cell's center falls within the node
+            // if (cellCenterX >= nodeX/10 && cellCenterX <= (nodeX + nodeWidth)/10 && 
+            //     cellCenterY >= nodeY/10 && cellCenterY <= (nodeY + nodeHeight)/10) {
+            //       console.log("hi");
+            //     marked = "OBSTACLE";
+            // } else {
+
+            //   // const cellRight = cellX + 10; // Assuming cellSize is 10
+            //   // const cellBottom = cellY + 10;
+
+            //   // // Check if any part of the node intersects with the cell's area
+            //   // if (nodeX/10 <= cellRight && (nodeX + nodeWidth)/10 >= cellX &&
+            //   //     nodeY/10 <= cellBottom && (nodeY/ + nodeHeight)/10 >= cellY) {
+            //   //     marked = "OBSTACLE";
+            //   // }
+              
+
+            //   // if (cellX >= nodeX/10 && cellX < nodeX/10 + nodeWidth/10 && cellY >= nodeY/10 && cellY < nodeY/10 + nodeHeight/10) {
+            //   //   console.log("extra check ", cellX, cellY);
+            //   //   marked = "OBSTACLE"
+            //   // }
+            // }
           
         });
 

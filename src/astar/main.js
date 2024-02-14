@@ -32,7 +32,7 @@ window.addEventListener("load", () => {
       return { x, y, width, height };
     });
 
-    console.log("updateGraph main, nodeCoords: ", nodeCoordinates);
+    // console.log("updateGraph main, nodeCoords: ", nodeCoordinates);
 
     // GRID
     let grid = new Grid(ctx, gridWidth, gridHeight, nodeCoordinates); // Create the grid
