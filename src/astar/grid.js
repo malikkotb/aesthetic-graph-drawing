@@ -35,7 +35,7 @@ export class Grid {
     for (let x = 0; x < width; x++) {
       this.grid[x] = [];
       for (let y = 0; y < height; y++) {
-        const cellX = x * 10;
+        const cellX = x * 10; // adjust to have same dimenions as pixels (cell = 100x100 pixels)
         const cellY = y * 10;
 
         //TODO: add functionality for MARKED-status for A* (start, end, open, closed)
@@ -49,51 +49,29 @@ export class Grid {
             height: nodeHeight,
           } = node;
 
-          console.log("");
-          if (cellX !== 0 && cellX !== 40) {
+          // Calculate cell corners
+          const cellTopLeft = {x: cellX, y: cellY};
+          const cellTopRight = {x: cellX + 10, y: cellY};
+          const cellBottomLeft = {x: cellX, y: cellY + 10};
+          const cellBottomRight = {x: cellX + 10, y: cellY + 10};
 
-            console.log("cellX, cellY ", cellX, cellY);
-            console.log("nodeX, nodeY ", nodeX / 10, nodeY / 10);
+          // Check if any cell corner falls within the node
+          const corners = [cellTopLeft, cellTopRight, cellBottomLeft, cellBottomRight];
+          const withinNode = corners.some(corner => {
+              return corner.x >= nodeX/10 && corner.x <= (nodeX + nodeWidth)/10 &&
+                    corner.y >= nodeY/10 && corner.y <= (nodeY + nodeHeight) /10;
+          });
+
+          if (withinNode) {
+            console.log("");
+              console.log("cellTopLeft", cellTopLeft);
+              console.log(cellTopLeft.x > nodeX/10);
+              console.log("nodeX ", nodeX/10);
+              marked = "OBSTACLE";
           }
 
-          if (cellX >= nodeX / 10) {
-            console.log("cellX >= nodeX ? ", cellX, nodeX / 10);
-          }
           
-          if (cellY >= nodeY / 10) {
-            console.log("cellY >= nodeY ? ", cellY, nodeY / 10);
-          }
-
-
-          // if (
-          //   cellX_10 >= nodeX_15  &&
-          //   ((cellX_10 <= (nodeX_15 + nodeWidth)) || (cellX_10 <= (nodeX_15 - nodeWidth))) &&
-          //   cellY_10 >= nodeY_15 &&
-          //   cellY_10 <= (nodeY_15 + nodeHeight)
-          // ) 
-
-          if (
-            cellX >= nodeX / 10 &&
-            ((cellX <= (nodeX + nodeWidth) / 10) || (cellX >= (nodeX - nodeWidth) / 10) ) 
-            && 
-            // (cellY >= nodeY / 10)
-            // &&
-            ((cellY <= (nodeY + nodeWidth) / 10) || (cellY >= (nodeY - nodeWidth) / 10) ) 
-
-            // cellX <= ((nodeX + nodeWidth) || (nodeX - nodeWidth)) / 10 &&
-            // cellY >= nodeY / 10 &&
-            // cellY <= (nodeY + nodeHeight) / 10
-          ) {
-            marked = "OBSTACLE";
-            console.log("OBSTACLE");
-            // console.log("cellX, cellY ", cellX, cellY);
-            // console.log("nodeX, nodeY ", nodeX / 10, nodeY / 10); // divide node-position by grid width (# of cells)
-          }
         });
-
-        if (cellX === 30) {
-          return;
-        }
 
         this.grid[x][y] = new Cell(context, x, y, 100, 100, marked);
       }
