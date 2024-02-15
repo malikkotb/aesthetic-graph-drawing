@@ -51,5 +51,5 @@ export class Cell {
     ctx.strokeRect(xPosition, yPosition, cellWidth, cellHeight);
   }
 
-  // function to calculate costs (g, h, f)
+  // TODO: function to calculate costs (g, h, f)
 }

@@ -39,12 +39,11 @@ export class Grid {
 
           // Check if any part of the node intersects with the cell's area
           if (nodeX / 10 < cellRight && (nodeX + nodeWidth) / 10 > cellX && nodeY / 10 < cellBottom && (nodeY + nodeHeight) / 10 > cellY) {
-            console.log("object");
             marked = "OBSTACLE";
           }
         });
 
-        this.grid[x][y] = new Cell(context, x, y, 100, 100, marked);
+        this.grid[x][y] = new Cell(context, x, y, 100, 100, marked); // cellWidth and height are 10
       }
     }
   }
