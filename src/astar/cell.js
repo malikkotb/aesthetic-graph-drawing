@@ -22,11 +22,11 @@ export class Cell {
     let yPosition = this.y * cellHeight;
 
     // fill the cell
-    let color = "black";
+    let color = "white";
     switch (state) {
-      case "WALKABLE":
-        color = "white"
-        break;
+      // case "WALKABLE":
+      //   color = "white"
+      //   break;
       case "START":
         color = "orange";
         break;

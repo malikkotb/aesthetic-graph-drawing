@@ -30,6 +30,7 @@ export class Grid {
         //TODO: add functionality for MARKED-status for A* (start, end, open, closed)
         let state = "";
 
+        //TODO: optimize this loop, as its now getting called 10000 times for each node
         nodeCoordinates.forEach((node) => {
           const { x: nodeX, y: nodeY, width: nodeWidth, height: nodeHeight } = node;
 
@@ -40,11 +41,15 @@ export class Grid {
           // Check if any part of the node intersects with the cell's area
           if (nodeX / 10 < cellRight && (nodeX + nodeWidth) / 10 > cellX && nodeY / 10 < cellBottom && (nodeY + nodeHeight) / 10 > cellY) {
             state = "OBSTACLE";
-          } else {
-            state = "WALKABLE"
-          }
+          } 
+          // else {
+          //   console.log("NOT OBstACLE");
+          // }
         });
 
+        if (this.grid[x][y]) {
+          console.log("already an objete here oui hahah");
+        }
         this.grid[x][y] = new Cell(context, x, y, 100, 100, state); // cellWidth and height are 10
       }
     }

@@ -1,4 +1,5 @@
 import { Grid } from "./grid.js";
+import { PathFinder } from "./pathfinding.js";
 window.addEventListener("load", () => {
   const canvas = document.querySelector("#grid");
   // define what context we are working in
@@ -19,6 +20,9 @@ window.addEventListener("load", () => {
   // get state and edge configuration from input
   document.getElementById("updateButton").addEventListener("click", updateGraph);
 
+  // call path finding meethod
+  document.getElementById("findPathBtn").addEventListener("click", findPath);
+
   // get a specific cell (and its marked-status, so its color)
   document.getElementById("cellButton").addEventListener("click", () => grid.getCell(3, 4));
 
@@ -29,14 +33,20 @@ window.addEventListener("load", () => {
     const edgeInput = document.getElementById("edgeInput").value;
     if (edgeInput) applyUserConnections(nodeCoordinates, edgeInput); // get Edge-Connection configs from user input
 
-    // console.log("updateGraph main, nodeCoords: ", nodeCoordinates);
-    // console.log("edgeConnections: ", edgeConnections);
-
-    // GRID
     grid = new Grid(ctx, gridWidth, gridHeight, nodeCoordinates); // Create the grid
+    redrawGraph(nodeCoordinates); // draw nodes
+  }
 
-    // draw nodes
-    redrawGraph(nodeCoordinates);
+  function findPath() {
+    const a_star = new PathFinder(ctx, grid);
+    edgeConnections.map((edge) => {
+      // TODO: figure out what Cell should be startCell
+      // TODO: make applicable for nodes covering multiple cells, right now this is for 1 node corresponding to 1 cell
+      // Corresponding Cell -> coordinates in grid
+      const startCell = { x: edge.startNode.x / 100, y: edge.startNode.y / 100 };
+      const targetCell = { x: edge.targetNode.x / 100, y: edge.targetNode.y / 100 };
+      a_star.findPath(startCell, targetCell);
+    });
   }
 
   function processNodeInput(nodeInput) {
@@ -61,14 +71,14 @@ window.addEventListener("load", () => {
       let [x1, y1, x2, y2] = connection.match(/\d+/g).map(Number);
 
       // Find the nodes in the nodes array using their coordinates
-      let node1 = nodes.find((node) => node.x === x1 && node.y === y1);
-      let node2 = nodes.find((node) => node.x === x2 && node.y === y2);
+      let startNode = nodes.find((node) => node.x === x1 && node.y === y1);
+      let targetNode = nodes.find((node) => node.x === x2 && node.y === y2);
 
       // Check if both nodes are found
-      if (node1 && node2) {
+      if (startNode && targetNode) {
         // Apply logic to connect nodes (e.g., draw a line between them)
-        console.log("Connecting nodes:", node1, "and", node2);
-        edgeConnections.push({ node1, node2 });
+        console.log("Connecting nodes:", startNode, "and", targetNode);
+        edgeConnections.push({ startNode, targetNode });
       } else {
         // Display an error message if nodes cannot be found
         console.log("Invalid node coordinates:", connection);
