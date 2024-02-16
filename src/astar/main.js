@@ -5,8 +5,8 @@ window.addEventListener("load", () => {
   /** @type {CanvasRenderingContext2D} */
   const ctx = canvas.getContext("2d");
 
-  canvas.height = 10000;
-  canvas.width = 10000;
+  canvas.height = 1000;
+  canvas.width = 1000;
 
   const gridHeight = 100; // 100 cells on y-axis
   const gridWidth = 100; // 100 cells on x-axis
@@ -14,8 +14,13 @@ window.addEventListener("load", () => {
   let nodeCoordinates = [];
   let edgeConnections = [];
 
+  let grid = null;
+
   // get state and edge configuration from input
   document.getElementById("updateButton").addEventListener("click", updateGraph);
+
+  // get a specific cell (and its marked-status, so its color)
+  document.getElementById("cellButton").addEventListener("click", () => grid.getCell(3, 4));
 
   function updateGraph() {
     const nodeInput = document.getElementById("nodeInput").value;
@@ -28,7 +33,7 @@ window.addEventListener("load", () => {
     // console.log("edgeConnections: ", edgeConnections);
 
     // GRID
-    let grid = new Grid(ctx, gridWidth, gridHeight, nodeCoordinates); // Create the grid
+    grid = new Grid(ctx, gridWidth, gridHeight, nodeCoordinates); // Create the grid
 
     // draw nodes
     redrawGraph(nodeCoordinates);
@@ -82,7 +87,7 @@ window.addEventListener("load", () => {
   function drawNode(node) {
     const { x, y, width, height } = node;
     ctx.strokeStyle = "red";
-    ctx.lineWidth = 5;
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.roundRect(x, y, width, height, [15]);
     ctx.stroke();

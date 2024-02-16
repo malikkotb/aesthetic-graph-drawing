@@ -28,7 +28,7 @@ export class Grid {
         const cellY = y * 10;
 
         //TODO: add functionality for MARKED-status for A* (start, end, open, closed)
-        let marked = "";
+        let state = "";
 
         nodeCoordinates.forEach((node) => {
           const { x: nodeX, y: nodeY, width: nodeWidth, height: nodeHeight } = node;
@@ -39,11 +39,13 @@ export class Grid {
 
           // Check if any part of the node intersects with the cell's area
           if (nodeX / 10 < cellRight && (nodeX + nodeWidth) / 10 > cellX && nodeY / 10 < cellBottom && (nodeY + nodeHeight) / 10 > cellY) {
-            marked = "OBSTACLE";
+            state = "OBSTACLE";
+          } else {
+            state = "WALKABLE"
           }
         });
 
-        this.grid[x][y] = new Cell(context, x, y, 100, 100, marked); // cellWidth and height are 10
+        this.grid[x][y] = new Cell(context, x, y, 100, 100, state); // cellWidth and height are 10
       }
     }
   }
@@ -52,6 +54,7 @@ export class Grid {
   // Method to get a cell at a specific coordinate
   getCell(x, y) {
     if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
+      console.log(this.grid[x][y]);
       return this.grid[x][y];
     }
     return null; // Return null if the coordinates are out of bounds

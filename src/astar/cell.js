@@ -3,27 +3,30 @@
 // A cell can have two states: walkable or not-walkable (so an obstacle)
 
 export class Cell {
-  constructor(context, x, y, width, height, marked) {
+  constructor(context, x, y, width, height, state) {
     // position of cell in the grid
     this.x = x; // X coordinate
     this.y = y; // Y coordinate
-    this.marked = marked; // status of cell
+    this.state = state; // status of cell
     this.parent = null; // Parent cell in the path
     this.gCost = Infinity; // Cost from the start node
     this.hCost = Infinity; // Heuristic cost to the end node
     this.fCost = Infinity; // Total cost (gCost + hCost)
 
-    this.draw(context, width, height, marked)
+    this.draw(context, width, height, state)
 
   }
 
-  draw(ctx, cellWidth, cellHeight, marked) {
+  draw(ctx, cellWidth, cellHeight, state) {
     let xPosition = this.x * cellWidth;
     let yPosition = this.y * cellHeight;
 
     // fill the cell
-    let color = "white";
-    switch (marked) {
+    let color = "black";
+    switch (state) {
+      case "WALKABLE":
+        color = "white"
+        break;
       case "START":
         color = "orange";
         break;
