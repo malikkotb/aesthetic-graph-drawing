@@ -39,9 +39,14 @@ export class Grid {
           const cellBottom = cellY + 10;
 
           // Check if any part of the node intersects with the cell's area
-          if (nodeX / 10 < cellRight && (nodeX + nodeWidth) / 10 > cellX && nodeY / 10 < cellBottom && (nodeY + nodeHeight) / 10 > cellY) {
+          if (
+            nodeX / 10 < cellRight &&
+            (nodeX + nodeWidth) / 10 > cellX &&
+            nodeY / 10 < cellBottom &&
+            (nodeY + nodeHeight) / 10 > cellY
+          ) {
             state = "OBSTACLE";
-          } 
+          }
           // else {
           //   console.log("NOT OBstACLE");
           // }
@@ -54,7 +59,6 @@ export class Grid {
       }
     }
   }
-  
 
   // Method to get a cell at a specific coordinate
   getCell(x, y) {
@@ -62,6 +66,29 @@ export class Grid {
       console.log(this.grid[x][y]);
       return this.grid[x][y];
     }
+    console.log("not in grid");
     return null; // Return null if the coordinates are out of bounds
+  }
+
+  getNeighbors(cell) {
+    // params: coordinates of cell I want to find neighbours of
+    let neighbours = [];
+
+    // loop that searches in 3x3 block
+    for (let x = -1; x <= 1; x++) {
+      for (let y = -1; y <= 1; y++) {
+        if (x === 0 && y === 0) continue; // -> center of 3x3 block -> cell currently inspected
+
+        const checkX = cell.x + x;
+        const checkY = cell.y + y;
+
+        const neighbour = this.getCell(checkX, checkY);
+
+        // if neighbor-Cell is in bounds of grid -> add it to list of neighbours
+        if (neighbour) neighbours.push(neighbour);
+      }
+    }
+
+    return neighbours;
   }
 }

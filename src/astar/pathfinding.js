@@ -35,13 +35,22 @@ export class PathFinder {
       }
 
       // remove currentCell from openSet and add it to the closedSet
-      let indexCurrentCell = openSet.indexOf(currentCell)
-      console.log("indexCurrentCell", indexCurrentCell);
+      let indexCurrentCell = openSet.indexOf(currentCell);
+      if (indexCurrentCell !== -1) {
+        openSet.splice(indexCurrentCell, 1);
+      }
+      closedSet.add(currentCell);
 
-      
 
-      openSet.pop() 
+      if (currentCell === targetCell) {// path found
+        return;
+      }
 
+      // loop though each of the niehgboring cells of the currentCell
+
+
+
+    //   openSet.pop(); // to not break computer (infinite loop)
     }
   }
 }
