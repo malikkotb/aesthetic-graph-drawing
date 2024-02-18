@@ -63,10 +63,8 @@ export class Grid {
   // Method to get a cell at a specific coordinate
   getCell(x, y) {
     if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
-      console.log(this.grid[x][y]);
       return this.grid[x][y];
     }
-    console.log("not in grid");
     return null; // Return null if the coordinates are out of bounds
   }
 

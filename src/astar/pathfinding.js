@@ -46,11 +46,15 @@ export class PathFinder {
         return;
       }
 
-      // loop though each of the niehgboring cells of the currentCell
+      // foreach neihgbour of currentCell
+      for (let neighbour of this.grid.getNeighbors(currentCell)) {
 
-
-
-    //   openSet.pop(); // to not break computer (infinite loop)
+        if (neighbour.state === "OBSTACLE" || closedSet.has(neighbour)) {
+            // can't traverse this cell -> skip ahead to next neighbour
+            continue;
+        }
+      }
+      return;
     }
   }
 }
