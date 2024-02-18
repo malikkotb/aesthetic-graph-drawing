@@ -11,10 +11,13 @@ export class Cell {
     this.parent = null; // Parent cell in the path
     this.gCost = Infinity; // Cost from the start node
     this.hCost = Infinity; // Heuristic cost to the end node
-    this.fCost = Infinity; // Total cost (gCost + hCost)
 
     this.draw(context, width, height, state)
 
+  }
+
+  fCost() { // Total cost
+    return this.gCost + this.hCost;
   }
 
   draw(ctx, cellWidth, cellHeight, state) {
