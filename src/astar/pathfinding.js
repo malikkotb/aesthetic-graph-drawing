@@ -57,4 +57,16 @@ export class PathFinder {
       return;
     }
   }
+
+  // get distance between 2 cells
+  getDistance(cellA, cellB) {
+    // first count on X-axis, how many cells cellA is away from cellB
+    // then count on Y-axis, ""
+    // then take lowest number (either x or y axis count) 
+    // => will determine how many diagonal moves it will take,
+    // to be either horizontally or vertically inline with the targetNode  
+
+
+  }
+
 }
