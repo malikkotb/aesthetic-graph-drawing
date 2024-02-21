@@ -9,8 +9,8 @@ export class Cell {
     this.y = y; // Y coordinate
     this.state = state; // status of cell
     this.parent = null; // Parent cell in the path
-    this.gCost = Infinity; // Cost from the start node
-    this.hCost = Infinity; // Heuristic cost to the end node
+    this.gCost = 0; // Cost from the start node
+    this.hCost = 0; // Heuristic cost to the end node
 
     this.draw(context, width, height, state)
 

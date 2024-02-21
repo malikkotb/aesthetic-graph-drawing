@@ -8,6 +8,7 @@ export class Grid {
     this.width = width;
     this.height = height;
     this.grid = [];
+    this.path = [];
     this.nodeCoordinates = nodeCoordinates; // list of coordinates of nodes
 
     // Steps before running A*

@@ -6,13 +6,13 @@ export class PathFinder {
 
   // TODO: will have to loop through all edge-Connections and call this method for each
   findPath(startCellPos, targetCellPos) {
-    console.log("startCellPos: ", startCellPos);
-    console.log("targetCellPos: ", targetCellPos);
-
     const startCell = this.grid.getCell(startCellPos.x, startCellPos.y);
     const targetCell = this.grid.getCell(targetCellPos.x, targetCellPos.y);
-    startCell;
-    // open set of cells, can maybe be optimized to use a Heap https://stackfull.dev/heaps-in-javascript
+
+    console.log("startCell: ", startCell);
+    console.log("targetCell: ", targetCell);
+
+    // open set of cells, can be optimized to use a Heap https://stackfull.dev/heaps-in-javascript
     const openSet = [];
     const closedSet = new Set();
 
@@ -40,19 +40,23 @@ export class PathFinder {
         openSet.splice(indexCurrentCell, 1);
       }
       closedSet.add(currentCell);
-      console.log("currentCell", currentCell);
+      // console.log("currentCell", currentCell);
 
       if (currentCell === targetCell) {
         // path found
+        console.log("path found");
         this.retracePath(startCell, targetCell);
         return;
       }
 
+      // I have to figure out a way, to mark the startCell and targetCell not as obstacle, but as somehting else
+      // for that iteration (1 iteration representing one edge  )
+
       // foreach neihgbour of currentCell
       for (let neighbourCell of this.grid.getNeighbors(currentCell)) {
-        console.log("neighbourCell", neighbourCell);
-        neighbourCell.parent = { id: "hi" };
-        console.log("neighbourCell", neighbourCell);
+        // if (neighbourCell.state === "OBSTACLE") {
+        //   console.log(neighbourCell);
+        // }
         if (neighbourCell.state === "OBSTACLE" || closedSet.has(neighbourCell)) {
           // can't traverse this cell -> skip ahead to next neighbour
           continue;
@@ -61,9 +65,10 @@ export class PathFinder {
         // if new path to neighbour is shorter than old path OR if neighbour is not in openSet:
 
         let newMovementCostToNeighbour = currentCell.gCost + this.getDistance(currentCell, neighbourCell);
-
+        //TODO: ISSUE: newMovementCostToNeighbour is always 0
         if (newMovementCostToNeighbour < neighbourCell.gCost || !openSet.includes(neighbourCell)) {
           // set f_cost of neighbour
+          console.log(neighbourCell);
           neighbourCell.gCost = newMovementCostToNeighbour;
           neighbourCell.hCost = this.getDistance(neighbourCell, targetCell);
 
@@ -73,26 +78,24 @@ export class PathFinder {
         }
       }
 
-      
-      return; // TODO: remove this return statement
     }
   }
 
   // retrace steps to get path from startCell to targetCell
   retracePath(startCell, targetCell) {
-    const path = []
+    const path = [];
     let currentCell = targetCell;
-    while(currentCell !== startCell) {
+    while (currentCell !== startCell) {
       path.push(currentCell);
       currentCell = currentCell.parent;
-    }    
+    }
     // path is backwards -> reverse it
     path.reverse();
 
-
-
+    // TODO: draw the path on grid
+    this.grid.path = path;
+    console.log("path", path);
   }
-
 
   // get distance between 2 cells
   getDistance(cellA, cellB) {
