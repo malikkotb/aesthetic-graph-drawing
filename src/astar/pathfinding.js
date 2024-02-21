@@ -40,22 +40,50 @@ export class PathFinder {
         openSet.splice(indexCurrentCell, 1);
       }
       closedSet.add(currentCell);
+      console.log("currentCell", currentCell);
 
       if (currentCell === targetCell) {
         // path found
+        this.retracePath(startCell, targetCell);
         return;
       }
 
       // foreach neihgbour of currentCell
-      for (let neighbour of this.grid.getNeighbors(currentCell)) {
-        if (neighbour.state === "OBSTACLE" || closedSet.has(neighbour)) {
+      for (let neighbourCell of this.grid.getNeighbors(currentCell)) {
+        console.log("neighbourCell", neighbourCell);
+        neighbourCell.parent = { id: "hi" };
+        console.log("neighbourCell", neighbourCell);
+        if (neighbourCell.state === "OBSTACLE" || closedSet.has(neighbourCell)) {
           // can't traverse this cell -> skip ahead to next neighbour
           continue;
         }
+
+        // if new path to neighbour is shorter than old path OR if neighbour is not in openSet:
+
+        let newMovementCostToNeighbour = currentCell.gCost + this.getDistance(currentCell, neighbourCell);
+
+        if (newMovementCostToNeighbour < neighbourCell.gCost || !openSet.includes(neighbourCell)) {
+          // set f_cost of neighbour
+          neighbourCell.gCost = newMovementCostToNeighbour;
+          neighbourCell.hCost = this.getDistance(neighbourCell, targetCell);
+
+          neighbourCell.parent = currentCell; // set parent of neighbourCell to currentCell
+
+          if (!openSet.includes(neighbourCell)) openSet.push(neighbourCell);
+        }
       }
-      return;
+
+      
+      return; // TODO: remove this return statement
     }
   }
+
+  // retrace steps to get path from startCell to targetCell
+  retracePath(startCell, targetCell) {
+    const path = []
+    
+  }
+
 
   // get distance between 2 cells
   getDistance(cellA, cellB) {
@@ -80,6 +108,5 @@ export class PathFinder {
 
     if (distanceX > distanceY) return 14 * distanceY + 10 * (distanceX - distanceY);
     return 14 * distanceX + 10 * (distanceY - distanceX);
-
   }
 }
