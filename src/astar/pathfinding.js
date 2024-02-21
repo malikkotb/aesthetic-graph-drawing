@@ -81,7 +81,16 @@ export class PathFinder {
   // retrace steps to get path from startCell to targetCell
   retracePath(startCell, targetCell) {
     const path = []
-    
+    let currentCell = targetCell;
+    while(currentCell !== startCell) {
+      path.push(currentCell);
+      currentCell = currentCell.parent;
+    }    
+    // path is backwards -> reverse it
+    path.reverse();
+
+
+
   }
 
 
