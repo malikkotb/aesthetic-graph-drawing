@@ -41,17 +41,16 @@ export class PathFinder {
       }
       closedSet.add(currentCell);
 
-
-      if (currentCell === targetCell) {// path found
+      if (currentCell === targetCell) {
+        // path found
         return;
       }
 
       // foreach neihgbour of currentCell
       for (let neighbour of this.grid.getNeighbors(currentCell)) {
-
         if (neighbour.state === "OBSTACLE" || closedSet.has(neighbour)) {
-            // can't traverse this cell -> skip ahead to next neighbour
-            continue;
+          // can't traverse this cell -> skip ahead to next neighbour
+          continue;
         }
       }
       return;
@@ -62,11 +61,25 @@ export class PathFinder {
   getDistance(cellA, cellB) {
     // first count on X-axis, how many cells cellA is away from cellB
     // then count on Y-axis, ""
-    // then take lowest number (either x or y axis count) 
+    // then take lowest number (either x or y axis count)
     // => will determine how many diagonal moves it will take,
-    // to be either horizontally or vertically inline with the targetNode  
+    // to be either horizontally or vertically inline with the targetCell
 
+    // then subtract the higher count (either x or y) from the lower count (= how many steps to get to the node, going either straight up or across)
+
+    // if distance vertically and horizontally = 10 (as a cell right now is 10x10 units), and distance diagonally is ≈ 14 (pyhagoras theorem)
+    // => equation:
+    // if x > y
+    // 14y + 10(x-y)
+
+    // else if y > x
+    // 14x + 10(y-x)
+
+    let distanceX = Math.abs(cellA.x - cellB.x);
+    let distanceY = Math.abs(cellA.y - cellB.y);
+
+    if (distanceX > distanceY) return 14 * distanceY + 10 * (distanceX - distanceY);
+    return 14 * distanceX + 10 * (distanceY - distanceX);
 
   }
-
 }

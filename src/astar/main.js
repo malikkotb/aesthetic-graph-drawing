@@ -46,6 +46,7 @@ window.addEventListener("load", () => {
       const startCell = { x: edge.startNode.x / 100, y: edge.startNode.y / 100 };
       const targetCell = { x: edge.targetNode.x / 100, y: edge.targetNode.y / 100 };
       a_star.findPath(startCell, targetCell);
+      a_star.getDistance(startCell, targetCell)
     });
   }
 
