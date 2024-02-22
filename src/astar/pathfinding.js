@@ -11,6 +11,9 @@ export class PathFinder {
 
     startCell.state = "START"
     targetCell.state = "END"
+    startCell.draw(this.context, 100, 100, startCell.state)
+    targetCell.draw(this.context, 100, 100, targetCell.state)
+
 
     console.log("startCell: ", startCell);
     console.log("targetCell: ", targetCell);
@@ -60,6 +63,9 @@ export class PathFinder {
           continue;
         }
 
+        // mark neighbour as OPEN
+        if (neighbourCell.state !== "END") neighbourCell.draw(this.context, 100, 100, "OPEN")
+
         // if new path to neighbour is shorter than old path OR if neighbour is not in openSet:
         let newMovementCostToNeighbour = currentCell.gCost + this.getDistance(currentCell, neighbourCell);
         //TODO: ISSUE: newMovementCostToNeighbour is always 0
@@ -73,7 +79,6 @@ export class PathFinder {
           if (!openSet.includes(neighbourCell)) openSet.push(neighbourCell);
         }
       }
-
     }
   }
 
@@ -82,6 +87,10 @@ export class PathFinder {
     const path = [];
     let currentCell = targetCell;
     while (currentCell !== startCell) {
+      if (currentCell !== targetCell) {
+        console.log(currentCell);
+        currentCell.draw(this.context, 100, 100, "CLOSED")
+      }
       path.push(currentCell);
       currentCell = currentCell.parent;
     }

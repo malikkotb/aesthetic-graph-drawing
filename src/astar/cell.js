@@ -27,9 +27,6 @@ export class Cell {
     // fill the cell
     let color = "white";
     switch (state) {
-      // case "WALKABLE":
-      //   color = "white"
-      //   break;
       case "START":
         color = "orange";
         break;
@@ -37,10 +34,10 @@ export class Cell {
         color = "blue";
         break;
       case "OPEN":
-        color = "GREEN";
+        color = "green";
         break;
       case "CLOSED":
-        color = "RED";
+        color = "red";
         break;
       case "OBSTACLE":
         color = "gray";

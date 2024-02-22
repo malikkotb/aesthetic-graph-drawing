@@ -48,15 +48,12 @@ export class Grid {
           ) {
             state = "OBSTACLE";
           }
-          // else {
-          //   console.log("NOT OBstACLE");
-          // }
         });
 
         if (this.grid[x][y]) {
           console.log("already an objete here oui hahah");
         }
-        this.grid[x][y] = new Cell(context, x, y, 100, 100, state); // cellWidth and height are 10
+        this.grid[x][y] = new Cell(context, x, y, 100, 100, state); // cellWidth and height are 100 (bc. grid right now is 1000x1000 -> 10 cells)
       }
     }
   }
