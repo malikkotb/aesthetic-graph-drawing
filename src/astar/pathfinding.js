@@ -9,6 +9,9 @@ export class PathFinder {
     const startCell = this.grid.getCell(startCellPos.x, startCellPos.y);
     const targetCell = this.grid.getCell(targetCellPos.x, targetCellPos.y);
 
+    startCell.state = "START"
+    targetCell.state = "END"
+
     console.log("startCell: ", startCell);
     console.log("targetCell: ", targetCell);
 
@@ -49,26 +52,19 @@ export class PathFinder {
         return;
       }
 
-      // I have to figure out a way, to mark the startCell and targetCell not as obstacle, but as somehting else
-      // for that iteration (1 iteration representing one edge  )
 
       // foreach neihgbour of currentCell
       for (let neighbourCell of this.grid.getNeighbors(currentCell)) {
-        // if (neighbourCell.state === "OBSTACLE") {
-        //   console.log(neighbourCell);
-        // }
         if (neighbourCell.state === "OBSTACLE" || closedSet.has(neighbourCell)) {
           // can't traverse this cell -> skip ahead to next neighbour
           continue;
         }
 
         // if new path to neighbour is shorter than old path OR if neighbour is not in openSet:
-
         let newMovementCostToNeighbour = currentCell.gCost + this.getDistance(currentCell, neighbourCell);
         //TODO: ISSUE: newMovementCostToNeighbour is always 0
         if (newMovementCostToNeighbour < neighbourCell.gCost || !openSet.includes(neighbourCell)) {
           // set f_cost of neighbour
-          console.log(neighbourCell);
           neighbourCell.gCost = newMovementCostToNeighbour;
           neighbourCell.hCost = this.getDistance(neighbourCell, targetCell);
 
