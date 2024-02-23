@@ -9,11 +9,10 @@ export class PathFinder {
     const startCell = this.grid.getCell(startCellPos.x, startCellPos.y);
     const targetCell = this.grid.getCell(targetCellPos.x, targetCellPos.y);
 
-    startCell.state = "START"
-    targetCell.state = "END"
-    startCell.draw(this.context, 100, 100, startCell.state)
-    targetCell.draw(this.context, 100, 100, targetCell.state)
-
+    startCell.state = "START";
+    targetCell.state = "END";
+    startCell.draw(this.context, 100, 100, startCell.state);
+    targetCell.draw(this.context, 100, 100, targetCell.state);
 
     console.log("startCell: ", startCell);
     console.log("targetCell: ", targetCell);
@@ -25,61 +24,69 @@ export class PathFinder {
     // add starting to node to Open Set
     openSet.push(startCell);
 
-    while (openSet.length > 0) {
-      let currentCell = openSet[0]; // current node with lowest f_cost
+    let count = 0;
 
-      // loop through all nodes in openSet and find node with lowest f_cost
-      // start at i = 1, as currentCell = openSet[0]
-      for (let i = 1; i < openSet.length; i++) {
-        if (
-          openSet[i].fCost < currentCell.fCost ||
-          (openSet[i].fCost === currentCell.fCost && openSet[i].hCost < currentCell.hCost)
-        ) {
-          // if they have equal fCost, compare hCosts ( and select cell closest to targetNode (lowest hCost))
-          currentCell = openSet[i];
-        }
-      }
+    setTimeout(() => {
+      console.log("timeout reached");
+      while (openSet.length > 0) {
+        let currentCell = openSet[0]; // current node with lowest f_cost
 
-      // remove currentCell from openSet and add it to the closedSet
-      let indexCurrentCell = openSet.indexOf(currentCell);
-      if (indexCurrentCell !== -1) {
-        openSet.splice(indexCurrentCell, 1);
-      }
-      closedSet.add(currentCell);
-      // console.log("currentCell", currentCell);
-
-      if (currentCell === targetCell) {
-        // path found
-        console.log("path found");
-        this.retracePath(startCell, targetCell);
-        return;
-      }
-
-
-      // foreach neihgbour of currentCell
-      for (let neighbourCell of this.grid.getNeighbors(currentCell)) {
-        if (neighbourCell.state === "OBSTACLE" || closedSet.has(neighbourCell)) {
-          // can't traverse this cell -> skip ahead to next neighbour
-          continue;
+        // loop through all nodes in openSet and find node with lowest f_cost
+        // start at i = 1, as currentCell = openSet[0]
+        for (let i = 1; i < openSet.length; i++) {
+          if (
+            openSet[i].fCost < currentCell.fCost ||
+            (openSet[i].fCost === currentCell.fCost && openSet[i].hCost < currentCell.hCost)
+          ) {
+            // if they have equal fCost, compare hCosts ( and select cell closest to targetNode (lowest hCost))
+            currentCell = openSet[i];
+          }
         }
 
-        // mark neighbour as OPEN
-        if (neighbourCell.state !== "END") neighbourCell.draw(this.context, 100, 100, "OPEN")
-
-        // if new path to neighbour is shorter than old path OR if neighbour is not in openSet:
-        let newMovementCostToNeighbour = currentCell.gCost + this.getDistance(currentCell, neighbourCell);
-        //TODO: ISSUE: newMovementCostToNeighbour is always 0
-        if (newMovementCostToNeighbour < neighbourCell.gCost || !openSet.includes(neighbourCell)) {
-          // set f_cost of neighbour
-          neighbourCell.gCost = newMovementCostToNeighbour;
-          neighbourCell.hCost = this.getDistance(neighbourCell, targetCell);
-
-          neighbourCell.parent = currentCell; // set parent of neighbourCell to currentCell
-
-          if (!openSet.includes(neighbourCell)) openSet.push(neighbourCell);
+        // remove currentCell from openSet and add it to the closedSet
+        let indexCurrentCell = openSet.indexOf(currentCell);
+        if (indexCurrentCell !== -1) {
+          openSet.splice(indexCurrentCell, 1);
         }
+        closedSet.add(currentCell);
+        // console.log("currentCell", currentCell);
+
+        if (currentCell === targetCell) {
+          // path found
+          console.log("path found");
+          this.retracePath(startCell, targetCell);
+          return;
+        }
+
+        const neighbours = this.grid.getNeighbors(currentCell);
+        console.log(neighbours);
+        if (count === 1) return;
+
+        // foreach neihgbour of currentCell
+        for (let neighbourCell of neighbours) {
+          if (neighbourCell.state === "OBSTACLE" || closedSet.has(neighbourCell)) {
+            // can't traverse this cell -> skip ahead to next neighbour
+            continue;
+          }
+
+          // mark neighbour as OPEN
+          if (neighbourCell.state !== "END") neighbourCell.draw(this.context, 100, 100, "OPEN");
+
+          // if new path to neighbour is shorter than old path OR if neighbour is not in openSet:
+          let newMovementCostToNeighbour = currentCell.gCost + this.getDistance(currentCell, neighbourCell);
+          if (newMovementCostToNeighbour < neighbourCell.gCost || !openSet.includes(neighbourCell)) {
+            // set f_cost of neighbour
+            neighbourCell.gCost = newMovementCostToNeighbour;
+            neighbourCell.hCost = this.getDistance(neighbourCell, targetCell);
+
+            neighbourCell.parent = currentCell; // set parent of neighbourCell to currentCell
+
+            if (!openSet.includes(neighbourCell)) openSet.push(neighbourCell);
+          }
+        }
+        count++;
       }
-    }
+    }, 2000);
   }
 
   // retrace steps to get path from startCell to targetCell
@@ -88,8 +95,9 @@ export class PathFinder {
     let currentCell = targetCell;
     while (currentCell !== startCell) {
       if (currentCell !== targetCell) {
-        console.log(currentCell);
-        currentCell.draw(this.context, 100, 100, "CLOSED")
+        currentCell.state = "CLOSED";
+        // console.log(currentCell);
+        currentCell.draw(this.context, 100, 100, currentCell.state);
       }
       path.push(currentCell);
       currentCell = currentCell.parent;

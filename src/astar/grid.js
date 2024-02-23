@@ -70,7 +70,7 @@ export class Grid {
     // params: coordinates of cell I want to find neighbours of
     let neighbours = [];
 
-    // loop that searches in 3x3 block
+    // loop that searches in 3x3 block around the current cell
     for (let x = -1; x <= 1; x++) {
       for (let y = -1; y <= 1; y++) {
         if (x === 0 && y === 0) continue; // -> center of 3x3 block -> cell currently inspected
