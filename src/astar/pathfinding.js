@@ -31,15 +31,20 @@ export class PathFinder {
         let currentCell = openSet[0]; // current node with lowest f_cost
 
         // loop through all nodes in openSet and find node with lowest f_cost
-        // start at i = 1, as currentCell = openSet[0]
+        // start at i = 1, as currentCell = openSet[0] 
         for (let i = 1; i < openSet.length; i++) {
+          // if (count === 3) {
+          //   console.log("openSet[i]: ", openSet[i], " - fCost: ", openSet[i].fCost());
+          //   console.log("currentCell[i]: ", currentCell, " - fCost: ", currentCell.fCost());
+          //   console.log("currentCell[i]: ", currentCell, " - fCost: ", typeof(currentCell.fCost()));
+          // }
           if (
-            openSet[i].fCost < currentCell.fCost ||
-            (openSet[i].fCost === currentCell.fCost && openSet[i].hCost < currentCell.hCost)
+            openSet[i].fCost() < currentCell.fCost() ||
+            (openSet[i].fCost() === currentCell.fCost() && openSet[i].hCost < currentCell.hCost)
           ) {
             // if they have equal fCost, compare hCosts ( and select cell closest to targetNode (lowest hCost))
             currentCell = openSet[i];
-          }
+          } 
         }
 
         console.log("currentCell", currentCell);
@@ -108,7 +113,7 @@ export class PathFinder {
         console.log("closedSet after adding new neighbours: ", JSON.parse(JSON.stringify(closedSet)));
   
         console.log("");
-        if (count === 3) return;
+        // if (count === 3) return;
 
         count++;
       }
@@ -121,7 +126,7 @@ export class PathFinder {
     let currentCell = targetCell;
     while (currentCell !== startCell) {
       if (currentCell !== targetCell) {
-        currentCell.state = "CLOSED";
+        currentCell.state = "FINISHED";
         // console.log(currentCell);
         currentCell.draw(this.context, 100, 100, currentCell.state);
       }

@@ -42,6 +42,9 @@ export class Cell {
       case "OBSTACLE":
         color = "gray";
         break;
+      case "FINISHED":
+        color = "pink";
+        break;
       default:
         break;
     }
@@ -54,7 +57,7 @@ export class Cell {
     ctx.strokeRect(xPosition, yPosition, cellWidth, cellHeight);
 
     // render label
-    if (state === "OPEN" || state === "CLOSED") {
+    if (state === "OPEN" || state === "CLOSED" || state === "FINISHED") {
       ctx.fillStyle = "black";
       ctx.font = "16px Arial"; // adjust font size and style as needed
       ctx.textAlign = "center";
