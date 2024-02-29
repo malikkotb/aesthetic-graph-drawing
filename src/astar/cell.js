@@ -12,15 +12,15 @@ export class Cell {
     this.gCost = 0; // Cost from the start node
     this.hCost = 0; // Heuristic cost to the end node
 
-    this.draw(context, width, height, state)
-
+    this.draw(context, width, height, state);
   }
 
-  fCost() { // Total cost
+  fCost() {
+    // Total cost
     return this.gCost + this.hCost;
   }
 
-  draw(ctx, cellWidth, cellHeight, state) {
+  draw(ctx, cellWidth, cellHeight, state, label = "") {
     let xPosition = this.x * cellWidth;
     let yPosition = this.y * cellHeight;
 
@@ -52,6 +52,15 @@ export class Cell {
     ctx.strokeStyle = "black";
     ctx.lineWidth = 1;
     ctx.strokeRect(xPosition, yPosition, cellWidth, cellHeight);
+
+    // render label
+    if (state === "OPEN" || state === "CLOSED") {
+      ctx.fillStyle = "black";
+      ctx.font = "16px Arial"; // adjust font size and style as needed
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(label, xPosition + cellWidth / 2, yPosition + cellHeight / 2);
+    }
   }
 
   // TODO: function to calculate costs (g, h, f)

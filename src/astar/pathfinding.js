@@ -40,6 +40,7 @@ export class PathFinder {
           ) {
             // if they have equal fCost, compare hCosts ( and select cell closest to targetNode (lowest hCost))
             currentCell = openSet[i];
+            console.log("currentCell", currentCell);
           }
         }
 
@@ -49,7 +50,11 @@ export class PathFinder {
           openSet.splice(indexCurrentCell, 1);
         }
         closedSet.add(currentCell);
-        // console.log("currentCell", currentCell);
+        currentCell.state = "CLOSED";
+        if (currentCell !== startCell && currentCell !== targetCell) {
+          currentCell.draw(this.context, 100, 100, currentCell.state, `${currentCell.gCost}, ${currentCell.hCost} = ${currentCell.gCost + currentCell.hCost}`);
+        }
+
 
         if (currentCell === targetCell) {
           // path found
@@ -60,7 +65,6 @@ export class PathFinder {
 
         const neighbours = this.grid.getNeighbors(currentCell);
         console.log(neighbours);
-        if (count === 1) return;
 
         // foreach neihgbour of currentCell
         for (let neighbourCell of neighbours) {
@@ -70,7 +74,10 @@ export class PathFinder {
           }
 
           // mark neighbour as OPEN
-          if (neighbourCell.state !== "END") neighbourCell.draw(this.context, 100, 100, "OPEN");
+          if (neighbourCell.state !== "END") {
+            neighbourCell.state = "OPEN";
+            neighbourCell.draw(this.context, 100, 100, neighbourCell.state);
+          }
 
           // if new path to neighbour is shorter than old path OR if neighbour is not in openSet:
           let newMovementCostToNeighbour = currentCell.gCost + this.getDistance(currentCell, neighbourCell);
@@ -81,9 +88,19 @@ export class PathFinder {
 
             neighbourCell.parent = currentCell; // set parent of neighbourCell to currentCell
 
+            neighbourCell.state = "OPEN"
+
+            // draw label on cell
+            neighbourCell.draw(this.context, 100, 100, neighbourCell.state, `${neighbourCell.gCost}, ${neighbourCell.hCost} = ${neighbourCell.gCost + neighbourCell.hCost}`);
+
             if (!openSet.includes(neighbourCell)) openSet.push(neighbourCell);
+          } else {
+            neighbourCell.draw(this.context, 100, 100, neighbourCell.state, `${neighbourCell.gCost}, ${neighbourCell.hCost} = ${neighbourCell.gCost + neighbourCell.hCost}`);
+            console.log(neighbourCell.state);
           }
         }
+        if (count === 3) return;
+
         count++;
       }
     }, 2000);
@@ -105,7 +122,6 @@ export class PathFinder {
     // path is backwards -> reverse it
     path.reverse();
 
-    // TODO: draw the path on grid
     this.grid.path = path;
     console.log("path", path);
   }
