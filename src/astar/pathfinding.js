@@ -16,9 +16,7 @@ export class PathFinder {
 
     // open set of cells, can be optimized to use a Heap https://stackfull.dev/heaps-in-javascript
     const openSet = [];
-    const closedSet = new Set();
-
-    // console.log("openSet before pushign startCell: ", JSON.parse(JSON.stringify(openSet)));
+    const closedSet = [];
 
     // add starting to node to Open Set
     openSet.push(startCell);
@@ -56,8 +54,8 @@ export class PathFinder {
         console.log("closedSet Before adding currentCell: ", JSON.parse(JSON.stringify(closedSet)));
         
         currentCell.state = "CLOSED";
-        
-        closedSet.add(currentCell);
+
+        closedSet.push(currentCell);
         if (currentCell !== startCell && currentCell !== targetCell) {
           currentCell.draw(this.context, 100, 100, currentCell.state, `${currentCell.gCost}, ${currentCell.hCost} = ${currentCell.gCost + currentCell.hCost}`);
         }
@@ -76,7 +74,7 @@ export class PathFinder {
 
         // foreach neihgbour of currentCell
         for (let neighbourCell of neighbours) {
-          if (neighbourCell.state === "OBSTACLE" || closedSet.has(neighbourCell)) {
+          if (neighbourCell.state === "OBSTACLE" || closedSet.includes(neighbourCell)) {
             // can't traverse this cell -> skip ahead to next neighbour
             continue;
           }
@@ -110,7 +108,7 @@ export class PathFinder {
         console.log("closedSet after adding new neighbours: ", JSON.parse(JSON.stringify(closedSet)));
   
         console.log("");
-        if (count === 2) return;
+        if (count === 3) return;
 
         count++;
       }
