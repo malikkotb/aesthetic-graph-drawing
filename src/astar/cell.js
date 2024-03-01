@@ -72,11 +72,10 @@ export class Cell {
   
     ctx.clearRect(xPosition, yPosition, cellWidth, cellHeight);
 
-    // border
+    // Keep border
     ctx.strokeStyle = "black";
     ctx.lineWidth = 1;
     ctx.strokeRect(xPosition, yPosition, cellWidth, cellHeight);
-
   }
   
 
