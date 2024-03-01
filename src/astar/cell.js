@@ -31,7 +31,7 @@ export class Cell {
         color = "orange";
         break;
       case "END":
-        color = "blue";
+        color = "lightblue";
         break;
       case "OPEN":
         color = "green";
@@ -43,7 +43,7 @@ export class Cell {
         color = "gray";
         break;
       case "FINISHED":
-        color = "pink";
+        color = "lightblue";
         break;
       default:
         break;
@@ -57,7 +57,7 @@ export class Cell {
     ctx.strokeRect(xPosition, yPosition, cellWidth, cellHeight);
 
     // render label
-    if (state === "OPEN" || state === "CLOSED" || state === "FINISHED") {
+    if (state === "OPEN" || state === "CLOSED" || state === "FINISHED" || state === "END") {
       ctx.fillStyle = "black";
       ctx.font = "16px Arial"; // adjust font size and style as needed
       ctx.textAlign = "center";
@@ -65,6 +65,20 @@ export class Cell {
       ctx.fillText(label, xPosition + cellWidth / 2, yPosition + cellHeight / 2);
     }
   }
+
+  clearCell(ctx, cellWidth, cellHeight) {
+    let xPosition = this.x * cellWidth;
+    let yPosition = this.y * cellHeight;
+  
+    ctx.clearRect(xPosition, yPosition, cellWidth, cellHeight);
+
+    // border
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(xPosition, yPosition, cellWidth, cellHeight);
+
+  }
+  
 
   // TODO: function to calculate costs (g, h, f)
 }
