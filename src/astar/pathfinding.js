@@ -23,95 +23,95 @@ export class PathFinder {
     let count = 0;
 
     // setTimeout(() => {
-      // timeout reached
-      while (this.openSet.length > 0) {
-        let currentCell = this.openSet[0]; // current node with lowest f_cost
+    // timeout reached
+    while (this.openSet.length > 0) {
+      let currentCell = this.openSet[0]; // current node with lowest f_cost
 
-        // loop through all nodes in this.openSet and find node with lowest f_cost
-        // start at i = 1, as currentCell = this.openSet[0]
-        for (let i = 1; i < this.openSet.length; i++) {
-          if (
-            this.openSet[i].fCost() < currentCell.fCost() ||
-            (this.openSet[i].fCost() === currentCell.fCost() && this.openSet[i].hCost < currentCell.hCost)
-          ) {
-            // if they have equal fCost, compare hCosts ( and select cell closest to targetNode (lowest hCost))
-            currentCell = this.openSet[i];
-          }
+      // loop through all nodes in this.openSet and find node with lowest f_cost
+      // start at i = 1, as currentCell = this.openSet[0]
+      for (let i = 1; i < this.openSet.length; i++) {
+        if (
+          this.openSet[i].fCost() < currentCell.fCost() ||
+          (this.openSet[i].fCost() === currentCell.fCost() && this.openSet[i].hCost < currentCell.hCost)
+        ) {
+          // if they have equal fCost, compare hCosts ( and select cell closest to targetNode (lowest hCost))
+          currentCell = this.openSet[i];
+        }
+      }
+
+      // remove currentCell from this.openSet and add it to the this.closedSet
+      let indexCurrentCell = this.openSet.indexOf(currentCell);
+      if (indexCurrentCell !== -1) {
+        this.openSet.splice(indexCurrentCell, 1);
+      }
+
+      currentCell.state = "CLOSED";
+
+      this.closedSet.push(currentCell);
+      if (currentCell !== startCell && currentCell !== targetCell) {
+        currentCell.draw(
+          this.context,
+          100,
+          100,
+          currentCell.state,
+          `${currentCell.gCost}, ${currentCell.hCost} = ${currentCell.gCost + currentCell.hCost}`
+        );
+      }
+
+      if (currentCell === targetCell) {
+        // path found
+        console.log("path found");
+        startCell.state = "START";
+        targetCell.state = "END";
+        this.retracePath(startCell, targetCell);
+        return;
+      }
+
+      const neighbours = this.grid.getNeighbors(currentCell);
+
+      // foreach neihgbour of currentCell
+      for (let neighbourCell of neighbours) {
+        if (neighbourCell.state === "OBSTACLE" || this.closedSet.includes(neighbourCell)) {
+          // can't traverse this cell -> skip ahead to next neighbour
+          continue;
         }
 
-        // remove currentCell from this.openSet and add it to the this.closedSet
-        let indexCurrentCell = this.openSet.indexOf(currentCell);
-        if (indexCurrentCell !== -1) {
-          this.openSet.splice(indexCurrentCell, 1);
-        }
+        // if new path to neighbour is shorter than old path OR if neighbour is not in this.openSet:
+        let newMovementCostToNeighbour = currentCell.gCost + this.getDistance(currentCell, neighbourCell);
+        if (newMovementCostToNeighbour < neighbourCell.gCost || !this.openSet.includes(neighbourCell)) {
+          // set f_cost of neighbour
+          neighbourCell.gCost = newMovementCostToNeighbour;
+          neighbourCell.hCost = this.getDistance(neighbourCell, targetCell);
 
-        currentCell.state = "CLOSED";
+          neighbourCell.parent = currentCell; // set parent of neighbourCell to currentCell
 
-        this.closedSet.push(currentCell);
-        if (currentCell !== startCell && currentCell !== targetCell) {
-          currentCell.draw(
+          if (neighbourCell.state !== "END") neighbourCell.state = "OPEN";
+
+          // draw label on cell
+          neighbourCell.draw(
             this.context,
             100,
             100,
-            currentCell.state,
-            `${currentCell.gCost}, ${currentCell.hCost} = ${currentCell.gCost + currentCell.hCost}`
+            neighbourCell.state,
+            `${neighbourCell.gCost}, ${neighbourCell.hCost} = ${neighbourCell.gCost + neighbourCell.hCost}`
+          );
+
+          if (!this.openSet.includes(neighbourCell)) this.openSet.push(neighbourCell);
+        } else {
+          neighbourCell.draw(
+            this.context,
+            100,
+            100,
+            neighbourCell.state,
+            `${neighbourCell.gCost}, ${neighbourCell.hCost} = ${neighbourCell.gCost + neighbourCell.hCost}`
           );
         }
-
-        if (currentCell === targetCell) {
-          // path found
-          console.log("path found");
-          startCell.state = "START";
-          targetCell.state = "END";
-          this.retracePath(startCell, targetCell);
-          return;
-        }
-
-        const neighbours = this.grid.getNeighbors(currentCell);
-
-        // foreach neihgbour of currentCell
-        for (let neighbourCell of neighbours) {
-          if (neighbourCell.state === "OBSTACLE" || this.closedSet.includes(neighbourCell)) {
-            // can't traverse this cell -> skip ahead to next neighbour
-            continue;
-          }
-
-          // if new path to neighbour is shorter than old path OR if neighbour is not in this.openSet:
-          let newMovementCostToNeighbour = currentCell.gCost + this.getDistance(currentCell, neighbourCell);
-          if (newMovementCostToNeighbour < neighbourCell.gCost || !this.openSet.includes(neighbourCell)) {
-            // set f_cost of neighbour
-            neighbourCell.gCost = newMovementCostToNeighbour;
-            neighbourCell.hCost = this.getDistance(neighbourCell, targetCell);
-
-            neighbourCell.parent = currentCell; // set parent of neighbourCell to currentCell
-
-            if (neighbourCell.state !== "END") neighbourCell.state = "OPEN";
-
-            // draw label on cell
-            neighbourCell.draw(
-              this.context,
-              100,
-              100,
-              neighbourCell.state,
-              `${neighbourCell.gCost}, ${neighbourCell.hCost} = ${neighbourCell.gCost + neighbourCell.hCost}`
-            );
-
-            if (!this.openSet.includes(neighbourCell)) this.openSet.push(neighbourCell);
-          } else {
-            neighbourCell.draw(
-              this.context,
-              100,
-              100,
-              neighbourCell.state,
-              `${neighbourCell.gCost}, ${neighbourCell.hCost} = ${neighbourCell.gCost + neighbourCell.hCost}`
-            );
-          }
-        }
-
-        if (count === 19) return;
-
-        count++;
       }
+
+      if (count === 19) return;
+
+      count++;
+    }
     // }, 1000);
   }
 
@@ -147,23 +147,32 @@ export class PathFinder {
 
     // remove labels, markings of other cells
     // setTimeout(() => {
-      for (let cell of this.openSet) {
+    for (let cell of this.openSet) {
+      cell.clearCell(this.context, 100, 100);
+    }
+
+    for (let cell of this.closedSet) {
+      if (cell.state !== "START" && cell.state !== "END") {
+        // cell.state !== "FINISHED" &&
         cell.clearCell(this.context, 100, 100);
       }
+    }
 
-      for (let cell of this.closedSet) {
-        if (cell.state !== "START" && cell.state !== "END") { // cell.state !== "FINISHED" && 
-          cell.clearCell(this.context, 100, 100);
-        }
-      }
+    // clear everything in closedSet and openSet for next iteration to work properly
+    this.openSet = [];
+    this.closedSet = [];
 
-      // draw the edge usign path
-      this.drawPath(this.context, path, 100, 100);
+    // draw the edge usign path
+    this.drawPath(this.context, path, 100, 100);
     // }, 1000);
   }
 
+  // draw edge
   drawPath(ctx, path, cellWidth, cellHeight) {
     if (path.length < 2) return;
+
+    // TODO: respect OBSTACLES along the path
+    // TODO: adjust direction of start and end point of edge, its still fucked for some configuration of edge-connections
 
     ctx.beginPath();
 

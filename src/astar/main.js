@@ -56,6 +56,7 @@ window.addEventListener("load", () => {
       // draw nodes and obstacles again before executing net iteration (in main.js)
       startCell.draw(ctx, 100, 100, startCell.state);
       targetCell.draw(ctx, 100, 100, targetCell.state);
+
       redrawGraph(nodeCoordinates);
       
     });
