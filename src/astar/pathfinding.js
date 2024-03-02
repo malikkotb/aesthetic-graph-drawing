@@ -8,9 +8,9 @@ export class PathFinder {
   }
 
   // TODO: will have to loop through all edge-Connections and call this method for each
-  findPath(startCellPos, targetCellPos) {
-    const startCell = this.grid.getCell(startCellPos.x, startCellPos.y);
-    const targetCell = this.grid.getCell(targetCellPos.x, targetCellPos.y);
+  findPath(startCell, targetCell) {
+    // const startCell = this.grid.getCell(startCellPos.x, startCellPos.y);
+    // const targetCell = this.grid.getCell(targetCellPos.x, targetCellPos.y);
 
     startCell.state = "START";
     targetCell.state = "END";
@@ -22,7 +22,7 @@ export class PathFinder {
 
     let count = 0;
 
-    setTimeout(() => {
+    // setTimeout(() => {
       // timeout reached
       while (this.openSet.length > 0) {
         let currentCell = this.openSet[0]; // current node with lowest f_cost
@@ -112,7 +112,7 @@ export class PathFinder {
 
         count++;
       }
-    }, 1000);
+    // }, 1000);
   }
 
   // retrace steps to get path from startCell to targetCell
@@ -146,43 +146,21 @@ export class PathFinder {
     console.log("path", path);
 
     // remove labels, markings of other cells
-    setTimeout(() => {
+    // setTimeout(() => {
       for (let cell of this.openSet) {
         cell.clearCell(this.context, 100, 100);
       }
 
       for (let cell of this.closedSet) {
-        if (cell.state !== "FINISHED" && cell.state !== "START" && cell.state !== "END") {
+        if (cell.state !== "START" && cell.state !== "END") { // cell.state !== "FINISHED" && 
           cell.clearCell(this.context, 100, 100);
         }
       }
 
       // draw the edge usign path
       this.drawPath(this.context, path, 100, 100);
-    }, 1000);
-
-    // TODO: set START and END cells back to "OBSTACLE" for next iteration of a*
+    // }, 1000);
   }
-
-  // drawPath(ctx, path, cellWidth, cellHeight) {
-  //   if (path.length < 2) return; // Need at least two points to draw a path
-
-  //   ctx.beginPath(); // Begin the drawing path
-
-  //   // Move to the center of the first cell in the path
-  //   let startX = path[0].x * cellWidth + cellWidth / 2;
-  //   let startY = path[0].y * cellHeight + cellHeight / 2;
-  //   ctx.moveTo(startX, startY);
-
-  //   // Draw a line to the center of each subsequent cell in the path
-  //   path.forEach((cell) => {
-  //     let x = cell.x * cellWidth + cellWidth / 2;
-  //     let y = cell.y * cellHeight + cellHeight / 2;
-  //     ctx.lineTo(x, y);
-  //   });
-
-  //   ctx.stroke(); // Draw the path
-  // }
 
   drawPath(ctx, path, cellWidth, cellHeight) {
     if (path.length < 2) return;
@@ -196,49 +174,56 @@ export class PathFinder {
     let directionY = path[1].y - path[0].y;
 
     // Adjust the start point based on the direction to the second cell
-    if (directionX > 0) { // Moving right
-        startX += cellWidth; // Start from the right edge of the first cell
-        startY += cellHeight / 2; // Vertically centered
-    } else if (directionX < 0) { // Moving left
-        startY += cellHeight / 2; // Vertically centered
-        // startX is already at the left edge
-    } else if (directionY > 0) { // Moving down
-        startX += cellWidth / 2; // Horizontally centered
-        startY += cellHeight; // Start from the bottom edge of the first cell
-    } else if (directionY < 0) { // Moving up
-        startX += cellWidth / 2; // Horizontally centered
-        // startY is already at the top edge
+    if (directionX > 0) {
+      // Moving right
+      startX += cellWidth; // Start from the right edge of the first cell
+      startY += cellHeight / 2; // Vertically centered
+    } else if (directionX < 0) {
+      // Moving left
+      startY += cellHeight / 2; // Vertically centered
+      // startX is already at the left edge
+    } else if (directionY > 0) {
+      // Moving down
+      startX += cellWidth / 2; // Horizontally centered
+      startY += cellHeight; // Start from the bottom edge of the first cell
+    } else if (directionY < 0) {
+      // Moving up
+      startX += cellWidth / 2; // Horizontally centered
+      // startY is already at the top edge
     }
-    
+
     ctx.moveTo(startX, startY);
 
     // Draw through intermediate points
     for (let i = 1; i < path.length - 1; i++) {
-        let x = path[i].x * cellWidth + cellWidth / 2;
-        let y = path[i].y * cellHeight + cellHeight / 2;
-        ctx.lineTo(x, y);
+      let x = path[i].x * cellWidth + cellWidth / 2;
+      let y = path[i].y * cellHeight + cellHeight / 2;
+      ctx.lineTo(x, y);
     }
 
     // The end cell logic remains unchanged from the previous correct implementation
-        // Calculate the ending point with fine adjustments
-    let last = path.length - 1 ;
-    let endX = path[last].x * cellWidth + (cellWidth / 2);
-    let endY = path[last].y * cellHeight + (cellHeight / 2);
-    if (path[last].x > path[last - 1].x) { // Coming from left
-        endX -= (cellWidth / 2) ;
-    } else if (path[last].x < path[last - 1].x) { // Coming from right
-        endX += (cellWidth / 2) ;
-    } else if (path[last].y > path[last - 1].y) { // Coming from top
-        endY -= (cellHeight / 2) ;
-    } else if (path[last].y < path[last - 1].y) { // Coming from bottom
-        endY += (cellHeight / 2) ;
+    // Calculate the ending point with fine adjustments
+    let last = path.length - 1;
+    let endX = path[last].x * cellWidth + cellWidth / 2;
+    let endY = path[last].y * cellHeight + cellHeight / 2;
+    if (path[last].x > path[last - 1].x) {
+      // Coming from left
+      endX -= cellWidth / 2;
+    } else if (path[last].x < path[last - 1].x) {
+      // Coming from right
+      endX += cellWidth / 2;
+    } else if (path[last].y > path[last - 1].y) {
+      // Coming from top
+      endY -= cellHeight / 2;
+    } else if (path[last].y < path[last - 1].y) {
+      // Coming from bottom
+      endY += cellHeight / 2;
     }
     ctx.lineTo(endX, endY);
 
     ctx.stroke();
-}
+  }
 
-  
   getDistance(cellA, cellB) {
     // first count on X-axis, how many cells cellA is away from cellB
     // then count on Y-axis, ""

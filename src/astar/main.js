@@ -43,9 +43,21 @@ window.addEventListener("load", () => {
       // TODO: figure out what Cell should be startCell
       // TODO: make applicable for nodes covering multiple cells, right now this is for 1 node corresponding to 1 cell
       // Corresponding Cell -> coordinates in grid
-      const startCell = { x: edge.startNode.x / 100, y: edge.startNode.y / 100 };
-      const targetCell = { x: edge.targetNode.x / 100, y: edge.targetNode.y / 100 };
+      const startCellPos = { x: edge.startNode.x / 100, y: edge.startNode.y / 100 };
+      const targetCellPos = { x: edge.targetNode.x / 100, y: edge.targetNode.y / 100 };
+      const startCell = grid.getCell(startCellPos.x, startCellPos.y);
+      const targetCell = grid.getCell(targetCellPos.x, targetCellPos.y);
+
       a_star.findPath(startCell, targetCell);
+      // set START and END cells back to "OBSTACLE" for next iteration of a*
+      // console.log("startCell: ", grid.getCell(startCellPos.x, startCellPos.y));
+      startCell.state = "OBSTACLE";
+      targetCell.state = "OBSTACLE";
+      // draw nodes and obstacles again before executing net iteration (in main.js)
+      startCell.draw(ctx, 100, 100, startCell.state);
+      targetCell.draw(ctx, 100, 100, targetCell.state);
+      redrawGraph(nodeCoordinates);
+      
     });
   }
 
