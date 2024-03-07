@@ -27,6 +27,8 @@ export class PathFinder {
     while (this.openSet.length > 0) {
       let currentCell = this.openSet[0]; // current node with lowest f_cost
 
+      // this is the slowest part of the algorithm -> in each iteration I have to search through the entire openSet to try and find the node with the lowest f_cost 
+
       // loop through all nodes in this.openSet and find node with lowest f_cost
       // start at i = 1, as currentCell = this.openSet[0]
       for (let i = 1; i < this.openSet.length; i++) {
