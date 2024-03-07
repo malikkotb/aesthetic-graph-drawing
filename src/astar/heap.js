@@ -4,14 +4,19 @@ class HeapItem {
     this.heapIndex = 0; // Initialized heap index
   }
 
-  // Example implementation of compareTo method
-  compareTo(otherItem) {
-    // Compare based on value
+  
+    compareTo(otherItem) {
+        // this.value being the f_cost
+        // if this.value has higher priority than otherItem then it returns 1, if it has the same priority -> returns 0, if its got lower priority it returns -1
 
-    // if this.value has higher priority than otherItem then it returns 1, if it has the same priority -> returns 0, if its got lower priority it returns -1
-
-    return this.value - otherItem.value;
-  }
+        if (this.value < otherItem.value) {
+            return -1; // This instance is less than otherItem
+        } else if (this.value > otherItem.value) {
+            return 1; // This instance is greater than otherItem
+        } else {
+            return 0; // This instance is equal to otherItem
+        }
+    }
 }
 
 export class Heap {
@@ -46,7 +51,37 @@ export class Heap {
   }
 
   sortDown(heapItem) {
-    
+    while(true) {
+        let leftChildIndex = heapItem.heapIndex * 2 + 1;
+        let rightChildIndex = heapItem.heapIndex * 2 + 2;
+        let swapIndex = 0;
+
+        // check if item has at least one child (the child on the left)
+        if (leftChildIndex < this.currentItemCount) {
+            swapIndex = leftChildIndex;
+
+            // then check if item also has right child 
+            if (rightChildIndex < this.currentItemCount) {
+                // then need to check which of the 2 children has got a higher priority and set the swapIndex to that child
+                if (this.items[leftChildIndex].compareTo(this.items[rightChildIndex]) < 0) {
+                    // if leftChildIndex has a lower priority than rightChildIndex 
+                    swapIndex = rightChildIndex;
+                    // now swapIndex is equal to the child with the highest priority 
+                }
+            }
+
+            // check if parent has lower priority than its highest priority child in which case -> swap them 
+            if (heapItem.compareTo(items[swapIndex]) < 0) {
+                this.swapItems(heapItem, items[swapIndex]);
+            } else {
+                // if parent has higher priority than both of its children, then its in its correct position
+                return;
+            }
+        } else {
+            // parent doesnt have any children, then its in its correct position
+            return; 
+        }
+    }
     
   }
 
