@@ -7,6 +7,9 @@ class HeapItem {
   // Example implementation of compareTo method
   compareTo(otherItem) {
     // Compare based on value
+
+    // if this.value has higher priority than otherItem then it returns 1, if it has the same priority -> returns 0, if its got lower priority it returns -1
+
     return this.value - otherItem.value;
   }
 }
@@ -22,27 +25,44 @@ export class Heap {
   }
 
   // Method to add an item to the heap
-  addItem(heapItem) {
+  addItem(item) {
     // I want each item to keep track of its own index in the heap and two items need to be comparable -> to say which item has the higher priority and
     // sort it in the heap
-    this.items.push(heapItem);
-    heapItem.heapIndex = this.currentItemCount;
-    this.currentItemCount++;
-    this.sortUp(heapItem);
+    this.items.push(item);
+    item.heapIndex = this.currentItemCount;
+    this.sortUp(item);
+    this.currentItemCount++; // increment currentItemCount
   }
 
-  // Helper method to maintain heap property (min or max) after adding an item
+  removeFirstItem() {
+    let firstItem = this.items[0];
+    this.currentItemCount--;
+
+    // now I need to take the item at the end of the heap and put it into the first place 
+    this.items[0] = this.items[this.currentItemCount]
+    this.items[0].heapIndex = 0;
+    this.sortDown(this.items[0])
+    return firstItem;
+  }
+
+  sortDown(heapItem) {
+    
+    
+  }
+
+  // method to maintain heap property after adding an item
   sortUp(heapItem) {
-    let currentIndex = heapItem.heapIndex;
+    let parentIndex = Math.floor((heapItem.heapIndex - 1) / 2);
+
     while (true) {
-      let parentIndex = Math.floor((currentIndex - 1) / 2);
       let parentItem = this.items[parentIndex];
-      if (heapItem.compareTo(parentItem) < 0) {
+      if (heapItem.compareTo(parentItem) > 0) {
+        // if heapItem has higher priority than parentItem (which in this case means it has a lower f_cost) -> then swap these items
         this.swapItems(heapItem, parentItem);
       } else {
-        break;
+        break; // as soon as the item is no longer of a higher priority than its parentItem -> break out of loop   
       }
-      currentIndex = parentIndex;
+      parentIndex = Math.floor((heapItem.heapIndex - 1) / 2);
     }
   }
 
