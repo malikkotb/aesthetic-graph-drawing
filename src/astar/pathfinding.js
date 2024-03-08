@@ -176,31 +176,26 @@ export class PathFinder {
     // TODO: respect OBSTACLES along the path
     // TODO: adjust direction of start and end point of edge, its still fucked for some configuration of edge-connections
 
+    // the path should touch the middle of the top edge of the cell, when coming in diagonally (so coming in at an angle)
+
     ctx.beginPath();
 
-    // Start adjustment to touch the inside edge of the first cell
-    let startX = path[0].x * cellWidth;
+    // Start adjustment to touch the middle of the top edge of the cell
+    let startX = path[0].x * cellWidth + cellWidth / 2;
     let startY = path[0].y * cellHeight;
+
     let directionX = path[1].x - path[0].x;
     let directionY = path[1].y - path[0].y;
 
-    // Adjust the start point based on the direction to the second cell
-    if (directionX > 0) {
-      // Moving right
-      startX += cellWidth; // Start from the right edge of the first cell
-      startY += cellHeight / 2; // Vertically centered
-    } else if (directionX < 0) {
-      // Moving left
-      startY += cellHeight / 2; // Vertically centered
-      // startX is already at the left edge
-    } else if (directionY > 0) {
-      // Moving down
-      startX += cellWidth / 2; // Horizontally centered
-      startY += cellHeight; // Start from the bottom edge of the first cell
-    } else if (directionY < 0) {
-      // Moving up
-      startX += cellWidth / 2; // Horizontally centered
-      // startY is already at the top edge
+    // Check if there's an obstacle diagonally adjacent to the starting cell
+    const obstacleX = path[0].x + directionX;
+    const obstacleY = path[0].y + directionY;
+    const hasObstacle = this.grid.getCell(obstacleX, obstacleY) === 1;
+
+    // Adjust the start point based on the direction to the second cell and obstacle presence
+    if (directionX > 0 && directionY < 0 && hasObstacle) {
+        // Moving diagonally (coming in from top-right) and there's an obstacle
+        startX += cellWidth / 2; // Start from the middle of the top edge of the cell
     }
 
     ctx.moveTo(startX, startY);
@@ -212,24 +207,25 @@ export class PathFinder {
       ctx.lineTo(x, y);
     }
 
-    // The end cell logic remains unchanged from the previous correct implementation
-    // Calculate the ending point with fine adjustments
-    let last = path.length - 1;
-    let endX = path[last].x * cellWidth + cellWidth / 2;
-    let endY = path[last].y * cellHeight + cellHeight / 2;
-    if (path[last].x > path[last - 1].x) {
-      // Coming from left
-      endX -= cellWidth / 2;
-    } else if (path[last].x < path[last - 1].x) {
-      // Coming from right
-      endX += cellWidth / 2;
-    } else if (path[last].y > path[last - 1].y) {
-      // Coming from top
-      endY -= cellHeight / 2;
-    } else if (path[last].y < path[last - 1].y) {
-      // Coming from bottom
-      endY += cellHeight / 2;
-    }
+     // Determine the direction from the second to the last cell
+     directionX = path[path.length - 1].x - path[path.length - 2].x;
+     directionY = path[path.length - 1].y - path[path.length - 2].y;
+ 
+     // Check if there's an obstacle diagonally adjacent to the last cell
+     const lastObstacleX = path[path.length - 1].x + directionX;
+     const lastObstacleY = path[path.length - 1].y + directionY;
+     const hasLastObstacle = this.grid.getCell(lastObstacleX, lastObstacleY) === 1;
+
+       // End adjustment to touch the middle of the top edge of the last cell
+    let endX = path[path.length - 1].x * cellWidth + cellWidth / 2;
+    let endY = path[path.length - 1].y * cellHeight;
+ 
+     // Adjust the end point based on the direction from the second to the last cell and obstacle presence
+     if (directionX < 0 && directionY < 0 && hasLastObstacle) {
+         // Moving diagonally (going out to top-left) and there's an obstacle
+         endX -= cellWidth / 2; // End at the middle of the top edge of the cell
+     }
+ 
     ctx.lineTo(endX, endY);
 
     ctx.stroke();
@@ -256,3 +252,4 @@ export class PathFinder {
     return 14 * distanceX + 10 * (distanceY - distanceX);
   }
 }
+
