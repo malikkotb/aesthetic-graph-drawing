@@ -208,31 +208,39 @@ export class PathFinder {
       ctx.lineTo(x, y);
     }
 
-    // Determine the direction from the second to the last cell
-    directionX = path[path.length - 1].x - path[path.length - 2].x;
-    directionY = path[path.length - 1].y - path[path.length - 2].y;
-    console.log("last cell", path[path.length - 1]);
-    console.log("second last cell", path[path.length - 2]);
-    console.log("directionX, directionY: ", directionX, directionY);
-    console.log(this.getDirection(directionX, directionY));
+    const lastCell = path[path.length - 1];
+    const secondLastCell = path[path.length - 2];
 
     // TODO: idea
     // Example: if direction is "down-left" -> that means the second-to-last-cell is the top-right neighbour of the last cell
     // In this case we need to check if there is an obstacle on top of the last cell, or on the right of the last cell
     // those are the 2 options (2 sides of the target-/end-/last-cell) where the edge can end at
     // now if there is an obstacle on the right of the last-cell then the edge needs to finish on the top side of the last-cell
-    
-    // if there is an obstacle on top of the last-cell, then the edge has to finish on the right side of the last-cell 
+
+    // if there is an obstacle on top of the last-cell, then the edge has to finish on the right side of the last-cell
 
     // if there is an obstacle both on top and on the left of the last cell, the edge has to finish in the top right corner of the last-cell
 
+    // TODO: do this for starting point as well. I believe it should be slightly different. Because direction will not be IN going TO the last cell
+    // but OUTgoing FROM the start cell
 
-    // End adjustment to touch the middle of the top edge of the last cell
-    let endX = path[path.length - 1].x * cellWidth + cellWidth / 2;
-    let endY = path[path.length - 1].y * cellHeight;
+    let { endX, endY } = this.getEndCoordinates(lastCell, secondLastCell, 100, 100);
+    console.log("end X, Y", endX, endY);
+
+    ctx.lineTo(endX, endY);
+
+    ctx.stroke();
+  }
+
+  getEndCoordinates(lastCell, secondLastCell, cellWidth, cellHeight) {
+    // Determine the direction from the second to the last cell
+    let directionX = lastCell.x - secondLastCell.x;
+    let directionY = lastCell.y - secondLastCell.y;
+
+    const direction = this.getDirection(directionX, directionY);
+    console.log(direction);
 
     // Check for obstacles in all adjacent cells to the last cell
-    const lastCell = path[path.length - 1];
     const leftObstacle = this.grid.getCell(lastCell.x - 1, lastCell.y).state === "OBSTACLE";
     const rightObstacle = this.grid.getCell(lastCell.x + 1, lastCell.y).state === "OBSTACLE";
     const topObstacle = this.grid.getCell(lastCell.x, lastCell.y - 1).state === "OBSTACLE";
@@ -241,44 +249,68 @@ export class PathFinder {
     const topRightObstacle = this.grid.getCell(lastCell.x + 1, lastCell.y - 1).state === "OBSTACLE";
     const bottomLeftObstacle = this.grid.getCell(lastCell.x - 1, lastCell.y + 1).state === "OBSTACLE";
     const bottomRightObstacle = this.grid.getCell(lastCell.x + 1, lastCell.y + 1).state === "OBSTACLE";
-    console.log(rightObstacle);
 
-    // Adjust the end point based on the obstacle presence
-    if (leftObstacle && topObstacle && !topLeftObstacle) {
-      console.log("Case 1: leftObstacle && topObstacle && !topLeftObstacle is true");
-      endX += cellWidth / 2;
-      endY -= cellHeight / 2;
-    } else if (rightObstacle && topObstacle && !topRightObstacle) {
-      console.log("Case 2: rightObstacle && topObstacle && !topRightObstacle is true");
-      endX -= cellWidth / 2;
-      endY -= cellHeight / 2;
-    } else if (leftObstacle && bottomObstacle && !bottomLeftObstacle) {
-      console.log("Case 3: leftObstacle && bottomObstacle && !bottomLeftObstacle is true");
-      endX += cellWidth / 2;
-      endY += cellHeight / 2;
-    } else if (rightObstacle && bottomObstacle && !bottomRightObstacle) {
-      console.log("Case 4: rightObstacle && bottomObstacle && !bottomRightObstacle is true");
-      endX -= cellWidth / 2;
-      endY += cellHeight / 2;
-    } else if (leftObstacle && !topObstacle && !bottomObstacle) {
-      console.log("Case 5: leftObstacle && !topObstacle && !bottomObstacle is true");
-      endX += cellWidth / 2;
-    } else if (rightObstacle && !topObstacle && !bottomObstacle) {
-      console.log("Case 6: rightObstacle && !topObstacle && !bottomObstacle is true");
-      endX -= cellWidth / 2;
-    } else if (topObstacle && !leftObstacle && !rightObstacle) {
-      console.log("Case 7: topObstacle && !leftObstacle && !rightObstacle is true");
-      endY -= cellHeight / 2;
-    } else if (bottomObstacle && !leftObstacle && !rightObstacle) {
-      console.log("Case 8: bottomObstacle && !leftObstacle && !rightObstacle is true");
-      endY += cellHeight / 2;
+    let endX = 0;
+    let endY = 0;
+
+    // TODO: these need to be adjusted for multiple edges going in on a single node
+
+    // End adjustment to touch the middle of the top edge of the last cell
+    // endX = lastCell.x * cellWidth + cellWidth / 2;
+    // endY = lastCell.y * cellHeight;
+
+    // // End adjustment to touch middle of the right edge of the last cell
+    // endX = lastCell.x * cellWidth + cellWidth;
+    // endY = lastCell.y * cellHeight + cellHeight / 2;
+
+    // End adjustment to touch middle of the left edge of the last cell
+    // endX = (lastCell.x * cellWidth);
+    // endY = lastCell.y * cellHeight + cellHeight / 2;
+
+    // End adjustment to touch middle of the bottom edge of the last cell
+    // endX = lastCell.x * cellWidth + cellWidth / 2;
+    // endY = lastCell.y * cellHeight + cellHeight;
+
+    // End adjustment to touch top right corner of the last cell
+    // endX = lastCell.x * cellWidth + cellWidth;
+    // endY = lastCell.y * cellHeight;
+
+    // End adjustment to touch top left corner of the last cell
+    // endX = lastCell.x * cellWidth;
+    // endY = lastCell.y * cellHeight;
+
+    // End adjustment to touch bottom left corner of the last cell
+    // endX = lastCell.x * cellWidth;
+    // endY = lastCell.y * cellHeight + cellHeight;
+
+    // End adjustment to touch bottom right corner of the last cell
+    endX = lastCell.x * cellWidth + cellWidth;
+    endY = lastCell.y * cellHeight + cellHeight;
+
+    // function should return x, y coordinates of docking point of edge
+    return { endX, endY };
+  }
+
+  getDirection(directionX, directionY) {
+    if (directionX === 0 && directionY < 0) {
+      return "up";
+    } else if (directionX === 0 && directionY > 0) {
+      return "down";
+    } else if (directionX > 0 && directionY === 0) {
+      return "right";
+    } else if (directionX < 0 && directionY === 0) {
+      return "left";
+    } else if (directionX > 0 && directionY < 0) {
+      return "up-right";
+    } else if (directionX < 0 && directionY < 0) {
+      return "up-left";
+    } else if (directionX > 0 && directionY > 0) {
+      return "down-right";
+    } else if (directionX < 0 && directionY > 0) {
+      return "down-left";
     } else {
-      console.log("None of the cases are true");
+      return "stationary"; // This case implies no movement
     }
-
-    ctx.lineTo(endX, endY);
-
-    ctx.stroke();
   }
 
   getDistance(cellA, cellB) {
@@ -301,26 +333,4 @@ export class PathFinder {
     if (distanceX > distanceY) return 14 * distanceY + 10 * (distanceX - distanceY);
     return 14 * distanceX + 10 * (distanceY - distanceX);
   }
-
-  getDirection(directionX, directionY) {
-    if (directionX === 0 && directionY < 0) {
-        return "up";
-    } else if (directionX === 0 && directionY > 0) {
-        return "down";
-    } else if (directionX > 0 && directionY === 0) {
-        return "right";
-    } else if (directionX < 0 && directionY === 0) {
-        return "left";
-    } else if (directionX > 0 && directionY < 0) {
-        return "up-right";
-    } else if (directionX < 0 && directionY < 0) {
-        return "up-left";
-    } else if (directionX > 0 && directionY > 0) {
-        return "down-right";
-    } else if (directionX < 0 && directionY > 0) {
-        return "down-left";
-    } else {
-        return "stationary"; // This case implies no movement
-    }
-}
 }
