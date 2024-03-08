@@ -27,7 +27,7 @@ export class PathFinder {
     while (this.openSet.length > 0) {
       let currentCell = this.openSet[0]; // current node with lowest f_cost
 
-      // this is the slowest part of the algorithm -> in each iteration I have to search through the entire openSet to try and find the node with the lowest f_cost 
+      // this is the slowest part of the algorithm -> in each iteration I have to search through the entire openSet to try and find the node with the lowest f_cost
 
       // loop through all nodes in this.openSet and find node with lowest f_cost
       // start at i = 1, as currentCell = this.openSet[0]
@@ -184,6 +184,7 @@ export class PathFinder {
     let startX = path[0].x * cellWidth + cellWidth / 2;
     let startY = path[0].y * cellHeight;
 
+    // direction for first to second cell
     let directionX = path[1].x - path[0].x;
     let directionY = path[1].y - path[0].y;
 
@@ -194,8 +195,8 @@ export class PathFinder {
 
     // Adjust the start point based on the direction to the second cell and obstacle presence
     if (directionX > 0 && directionY < 0 && hasObstacle) {
-        // Moving diagonally (coming in from top-right) and there's an obstacle
-        startX += cellWidth / 2; // Start from the middle of the top edge of the cell
+      // Moving diagonally (coming in from top-right) and there's an obstacle
+      startX += cellWidth / 2; // Start from the middle of the top edge of the cell
     }
 
     ctx.moveTo(startX, startY);
@@ -207,25 +208,74 @@ export class PathFinder {
       ctx.lineTo(x, y);
     }
 
-     // Determine the direction from the second to the last cell
-     directionX = path[path.length - 1].x - path[path.length - 2].x;
-     directionY = path[path.length - 1].y - path[path.length - 2].y;
- 
-     // Check if there's an obstacle diagonally adjacent to the last cell
-     const lastObstacleX = path[path.length - 1].x + directionX;
-     const lastObstacleY = path[path.length - 1].y + directionY;
-     const hasLastObstacle = this.grid.getCell(lastObstacleX, lastObstacleY) === 1;
+    // Determine the direction from the second to the last cell
+    directionX = path[path.length - 1].x - path[path.length - 2].x;
+    directionY = path[path.length - 1].y - path[path.length - 2].y;
+    console.log("last cell", path[path.length - 1]);
+    console.log("second last cell", path[path.length - 2]);
+    console.log("directionX, directionY: ", directionX, directionY);
+    console.log(this.getDirection(directionX, directionY));
 
-       // End adjustment to touch the middle of the top edge of the last cell
+    // TODO: idea
+    // Example: if direction is "down-left" -> that means the second-to-last-cell is the top-right neighbour of the last cell
+    // In this case we need to check if there is an obstacle on top of the last cell, or on the right of the last cell
+    // those are the 2 options (2 sides of the target-/end-/last-cell) where the edge can end at
+    // now if there is an obstacle on the right of the last-cell then the edge needs to finish on the top side of the last-cell
+    
+    // if there is an obstacle on top of the last-cell, then the edge has to finish on the right side of the last-cell 
+
+    // if there is an obstacle both on top and on the left of the last cell, the edge has to finish in the top right corner of the last-cell
+
+
+    // End adjustment to touch the middle of the top edge of the last cell
     let endX = path[path.length - 1].x * cellWidth + cellWidth / 2;
     let endY = path[path.length - 1].y * cellHeight;
- 
-     // Adjust the end point based on the direction from the second to the last cell and obstacle presence
-     if (directionX < 0 && directionY < 0 && hasLastObstacle) {
-         // Moving diagonally (going out to top-left) and there's an obstacle
-         endX -= cellWidth / 2; // End at the middle of the top edge of the cell
-     }
- 
+
+    // Check for obstacles in all adjacent cells to the last cell
+    const lastCell = path[path.length - 1];
+    const leftObstacle = this.grid.getCell(lastCell.x - 1, lastCell.y).state === "OBSTACLE";
+    const rightObstacle = this.grid.getCell(lastCell.x + 1, lastCell.y).state === "OBSTACLE";
+    const topObstacle = this.grid.getCell(lastCell.x, lastCell.y - 1).state === "OBSTACLE";
+    const bottomObstacle = this.grid.getCell(lastCell.x, lastCell.y + 1).state === "OBSTACLE";
+    const topLeftObstacle = this.grid.getCell(lastCell.x - 1, lastCell.y - 1).state === "OBSTACLE";
+    const topRightObstacle = this.grid.getCell(lastCell.x + 1, lastCell.y - 1).state === "OBSTACLE";
+    const bottomLeftObstacle = this.grid.getCell(lastCell.x - 1, lastCell.y + 1).state === "OBSTACLE";
+    const bottomRightObstacle = this.grid.getCell(lastCell.x + 1, lastCell.y + 1).state === "OBSTACLE";
+    console.log(rightObstacle);
+
+    // Adjust the end point based on the obstacle presence
+    if (leftObstacle && topObstacle && !topLeftObstacle) {
+      console.log("Case 1: leftObstacle && topObstacle && !topLeftObstacle is true");
+      endX += cellWidth / 2;
+      endY -= cellHeight / 2;
+    } else if (rightObstacle && topObstacle && !topRightObstacle) {
+      console.log("Case 2: rightObstacle && topObstacle && !topRightObstacle is true");
+      endX -= cellWidth / 2;
+      endY -= cellHeight / 2;
+    } else if (leftObstacle && bottomObstacle && !bottomLeftObstacle) {
+      console.log("Case 3: leftObstacle && bottomObstacle && !bottomLeftObstacle is true");
+      endX += cellWidth / 2;
+      endY += cellHeight / 2;
+    } else if (rightObstacle && bottomObstacle && !bottomRightObstacle) {
+      console.log("Case 4: rightObstacle && bottomObstacle && !bottomRightObstacle is true");
+      endX -= cellWidth / 2;
+      endY += cellHeight / 2;
+    } else if (leftObstacle && !topObstacle && !bottomObstacle) {
+      console.log("Case 5: leftObstacle && !topObstacle && !bottomObstacle is true");
+      endX += cellWidth / 2;
+    } else if (rightObstacle && !topObstacle && !bottomObstacle) {
+      console.log("Case 6: rightObstacle && !topObstacle && !bottomObstacle is true");
+      endX -= cellWidth / 2;
+    } else if (topObstacle && !leftObstacle && !rightObstacle) {
+      console.log("Case 7: topObstacle && !leftObstacle && !rightObstacle is true");
+      endY -= cellHeight / 2;
+    } else if (bottomObstacle && !leftObstacle && !rightObstacle) {
+      console.log("Case 8: bottomObstacle && !leftObstacle && !rightObstacle is true");
+      endY += cellHeight / 2;
+    } else {
+      console.log("None of the cases are true");
+    }
+
     ctx.lineTo(endX, endY);
 
     ctx.stroke();
@@ -251,5 +301,26 @@ export class PathFinder {
     if (distanceX > distanceY) return 14 * distanceY + 10 * (distanceX - distanceY);
     return 14 * distanceX + 10 * (distanceY - distanceX);
   }
-}
 
+  getDirection(directionX, directionY) {
+    if (directionX === 0 && directionY < 0) {
+        return "up";
+    } else if (directionX === 0 && directionY > 0) {
+        return "down";
+    } else if (directionX > 0 && directionY === 0) {
+        return "right";
+    } else if (directionX < 0 && directionY === 0) {
+        return "left";
+    } else if (directionX > 0 && directionY < 0) {
+        return "up-right";
+    } else if (directionX < 0 && directionY < 0) {
+        return "up-left";
+    } else if (directionX > 0 && directionY > 0) {
+        return "down-right";
+    } else if (directionX < 0 && directionY > 0) {
+        return "down-left";
+    } else {
+        return "stationary"; // This case implies no movement
+    }
+}
+}

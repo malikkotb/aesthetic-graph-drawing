@@ -79,5 +79,4 @@ export class Cell {
   }
   
 
-  // TODO: function to calculate costs (g, h, f)
 }
