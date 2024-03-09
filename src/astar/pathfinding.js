@@ -8,6 +8,7 @@ export class PathFinder {
   }
 
   // TODO: will have to loop through all edge-Connections and call this method for each
+  // TODO: maybe add a new layer to draw the edge on, to avoid conflictions when rendering multiple edges
   findPath(startCell, targetCell) {
     // const startCell = this.grid.getCell(startCellPos.x, startCellPos.y);
     // const targetCell = this.grid.getCell(targetCellPos.x, targetCellPos.y);
@@ -164,8 +165,13 @@ export class PathFinder {
     this.openSet = [];
     this.closedSet = [];
 
-    // draw the edge usign path
+    // draw the edge using path
     this.drawPath(this.context, path, 100, 100);
+
+    console.log("");
+    console.log("");
+    console.log("");
+
     // }, 1000);
   }
 
@@ -296,6 +302,7 @@ export class PathFinder {
         // start adjustment to touch middle of the bottom edge of the last cell
         startX = firstCell.x * cellWidth + cellWidth / 2;
         startY = firstCell.y * cellHeight + cellHeight;
+        break;
       case "topRightCorner":
         // start adjustment to touch top right corner of the last cell
         startX = firstCell.x * cellWidth + cellWidth;
