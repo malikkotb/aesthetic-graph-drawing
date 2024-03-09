@@ -176,28 +176,12 @@ export class PathFinder {
     // TODO: respect OBSTACLES along the path
     // TODO: adjust direction of start and end point of edge, its still fucked for some configuration of edge-connections
 
-    // the path should touch the middle of the top edge of the cell, when coming in diagonally (so coming in at an angle)
-
     ctx.beginPath();
 
-    // Start adjustment to touch the middle of the top edge of the cell
-    let startX = path[0].x * cellWidth + cellWidth / 2;
-    let startY = path[0].y * cellHeight;
+    const firstCell = path[0];
+    const secondCell = path[1];
 
-    // direction for first to second cell
-    let directionX = path[1].x - path[0].x;
-    let directionY = path[1].y - path[0].y;
-
-    // Check if there's an obstacle diagonally adjacent to the starting cell
-    const obstacleX = path[0].x + directionX;
-    const obstacleY = path[0].y + directionY;
-    const hasObstacle = this.grid.getCell(obstacleX, obstacleY) === 1;
-
-    // Adjust the start point based on the direction to the second cell and obstacle presence
-    if (directionX > 0 && directionY < 0 && hasObstacle) {
-      // Moving diagonally (coming in from top-right) and there's an obstacle
-      startX += cellWidth / 2; // Start from the middle of the top edge of the cell
-    }
+    let { startX, startY } = this.getStartCoordinates(firstCell, secondCell, 100, 100);
 
     ctx.moveTo(startX, startY);
 
@@ -211,7 +195,7 @@ export class PathFinder {
     const lastCell = path[path.length - 1];
     const secondLastCell = path[path.length - 2];
 
-    // TODO: do this for starting point as well. I believe it should be slightly different. Because direction will not be IN going TO the last cell
+    // do this for starting point as well. I believe it should be slightly different. Because direction will not be IN going TO the last cell
     // but OUTgoing FROM the start cell
 
     let { endX, endY } = this.getEndCoordinates(lastCell, secondLastCell, 100, 100);
@@ -220,6 +204,79 @@ export class PathFinder {
     ctx.lineTo(endX, endY);
 
     ctx.stroke();
+  }
+
+  getStartCoordinates(firstCell, secondCell, cellWidth, cellHeight) {
+    // direction for first to second cell
+    let directionX = secondCell.x - firstCell.x;
+    let directionY = secondCell.y - firstCell.y;
+
+    const direction = this.getDirection(directionX, directionY);
+    console.log("startDirection: ", direction);
+
+    const leftObstacle = this.grid.getCell(firstCell.x - 1, firstCell.y).state === "OBSTACLE";
+    const rightObstacle = this.grid.getCell(firstCell.x + 1, firstCell.y).state === "OBSTACLE";
+    const topObstacle = this.grid.getCell(firstCell.x, firstCell.y - 1).state === "OBSTACLE";
+    const bottomObstacle = this.grid.getCell(firstCell.x, firstCell.y + 1).state === "OBSTACLE";
+
+    let adjustment = "";
+    switch (direction) {
+    }
+    return this.getAdjustedEndCoordinates(lastCell, cellWidth, cellHeight, adjustment);
+  }
+
+  getAdjustedStartCoordinates(firstCell, cellWidth, cellHeight, adjustment) {
+    let startX, startY;
+
+    // TODO: these need to be adjusted for multiple edges going in on a single node, maybe need to be pivoted to the side a little, and maybe add a variable to each node
+    // which tracks how many ingoing edges it has to adjust accordingly
+    // Parallel edges need to be possible (perhaps by rendering one canvas above the next and adjusting the endcoordinates a little to make it look like they are parallel)
+
+    switch (adjustment) {
+      case "middleTop":
+        // start adjustment to touch the middle of the top edge of the last cell
+        startX = firstCell.x * cellWidth + cellWidth / 2;
+        startY = firstCell.y * cellHeight;
+        break;
+      case "middleRight":
+        // start adjustment to touch middle of the right edge of the last cell
+        startX = firstCell.x * cellWidth + cellWidth;
+        startY = firstCell.y * cellHeight + cellHeight / 2;
+        break;
+      case "middleLeft":
+        // start adjustment to touch middle of the left edge of the last cell
+        startX = firstCell.x * cellWidth;
+        startY = firstCell.y * cellHeight + cellHeight / 2;
+        break;
+      case "middleBottom":
+        // start adjustment to touch middle of the bottom edge of the last cell
+        startX = firstCell.x * cellWidth + cellWidth / 2;
+        startY = firstCell.y * cellHeight + cellHeight;
+      case "topRightCorner":
+        // start adjustment to touch top right corner of the last cell
+        startX = firstCell.x * cellWidth + cellWidth;
+        startY = firstCell.y * cellHeight;
+        break;
+      case "topLeftCorner":
+        // start adjustment to touch top left corner of the last cell
+        startX = firstCell.x * cellWidth;
+        startY = firstCell.y * cellHeight;
+        break;
+      case "bottomLeftCorner":
+        // start adjustment to touch bottom left corner of the last cell
+        startX = firstCell.x * cellWidth;
+        startY = firstCell.y * cellHeight + cellHeight;
+        break;
+      case "bottomRightCorner":
+        // start adjustment to touch bottom right corner of the last cell
+        startX = firstCell.x * cellWidth + cellWidth;
+        startY = firstCell.y * cellHeight + cellHeight;
+        break;
+      default:
+        console.error("Invalid adjustment type");
+    }
+
+    return { startX, startY };
   }
 
   getEndCoordinates(lastCell, secondLastCell, cellWidth, cellHeight) {
@@ -239,34 +296,30 @@ export class PathFinder {
     let directionY = lastCell.y - secondLastCell.y;
 
     const direction = this.getDirection(directionX, directionY);
-    console.log(direction);
 
     // Check for obstacles in all adjacent cells to the last cell
     const leftObstacle = this.grid.getCell(lastCell.x - 1, lastCell.y).state === "OBSTACLE";
     const rightObstacle = this.grid.getCell(lastCell.x + 1, lastCell.y).state === "OBSTACLE";
     const topObstacle = this.grid.getCell(lastCell.x, lastCell.y - 1).state === "OBSTACLE";
     const bottomObstacle = this.grid.getCell(lastCell.x, lastCell.y + 1).state === "OBSTACLE";
-    const topLeftObstacle = this.grid.getCell(lastCell.x - 1, lastCell.y - 1).state === "OBSTACLE";
-    const topRightObstacle = this.grid.getCell(lastCell.x + 1, lastCell.y - 1).state === "OBSTACLE";
-    const bottomLeftObstacle = this.grid.getCell(lastCell.x - 1, lastCell.y + 1).state === "OBSTACLE";
-    const bottomRightObstacle = this.grid.getCell(lastCell.x + 1, lastCell.y + 1).state === "OBSTACLE";
-
-    let endX = 0;
-    let endY = 0;
+    // const topLeftObstacle = this.grid.getCell(lastCell.x - 1, lastCell.y - 1).state === "OBSTACLE";
+    // const topRightObstacle = this.grid.getCell(lastCell.x + 1, lastCell.y - 1).state === "OBSTACLE";
+    // const bottomLeftObstacle = this.grid.getCell(lastCell.x - 1, lastCell.y + 1).state === "OBSTACLE";
+    // const bottomRightObstacle = this.grid.getCell(lastCell.x + 1, lastCell.y + 1).state === "OBSTACLE";
 
     let adjustment = "";
     switch (direction) {
       case "up":
-        adjustment = "middleBottom"
+        adjustment = "middleBottom";
         break;
       case "down":
-        adjustment = "middleTop"
+        adjustment = "middleTop";
         break;
       case "right":
-        adjustment = "middleLeft"
+        adjustment = "middleLeft";
         break;
       case "left":
-        adjustment = "middleRight"
+        adjustment = "middleRight";
         break;
       case "up-right":
         if (leftObstacle && !bottomObstacle) {
@@ -383,6 +436,7 @@ export class PathFinder {
   }
 
   getDirection(directionX, directionY) {
+    // INgoing direction to last cell
     if (directionX === 0 && directionY < 0) {
       return "up";
     } else if (directionX === 0 && directionY > 0) {
