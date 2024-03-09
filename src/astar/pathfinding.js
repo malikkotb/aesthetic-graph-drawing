@@ -211,16 +211,6 @@ export class PathFinder {
     const lastCell = path[path.length - 1];
     const secondLastCell = path[path.length - 2];
 
-    // TODO: idea
-    // Example: if direction is "down-left" -> that means the second-to-last-cell is the top-right neighbour of the last cell
-    // In this case we need to check if there is an obstacle on top of the last cell, or on the right of the last cell
-    // those are the 2 options (2 sides of the target-/end-/last-cell) where the edge can end at
-    // now if there is an obstacle on the right of the last-cell then the edge needs to finish on the top side of the last-cell
-
-    // if there is an obstacle on top of the last-cell, then the edge has to finish on the right side of the last-cell
-
-    // if there is an obstacle both on top and on the left of the last cell, the edge has to finish in the top right corner of the last-cell
-
     // TODO: do this for starting point as well. I believe it should be slightly different. Because direction will not be IN going TO the last cell
     // but OUTgoing FROM the start cell
 
@@ -233,6 +223,17 @@ export class PathFinder {
   }
 
   getEndCoordinates(lastCell, secondLastCell, cellWidth, cellHeight) {
+    // idea
+    // Example: if direction is "down-left" -> that means the second-to-last-cell is the top-right neighbour of the last cell
+    // In this case we need to check if there is an obstacle on top of the last cell, or on the right of the last cell
+    // those are the 2 options (2 sides of the last-cell) where the edge can end at
+
+    // now if there is an obstacle on the right of the last-cell then the edge needs to finish on the top side of the last-cell
+
+    // if there is an obstacle on top of the last-cell, then the edge has to finish on the right side of the last-cell
+
+    // if there is an obstacle both on top and on the left of the last cell, the edge has to finish in the top right corner of the last-cell
+
     // Determine the direction from the second to the last cell
     let directionX = lastCell.x - secondLastCell.x;
     let directionY = lastCell.y - secondLastCell.y;
@@ -253,41 +254,103 @@ export class PathFinder {
     let endX = 0;
     let endY = 0;
 
-    // TODO: these need to be adjusted for multiple edges going in on a single node
-
-    // End adjustment to touch the middle of the top edge of the last cell
-    // endX = lastCell.x * cellWidth + cellWidth / 2;
-    // endY = lastCell.y * cellHeight;
-
-    // // End adjustment to touch middle of the right edge of the last cell
-    // endX = lastCell.x * cellWidth + cellWidth;
-    // endY = lastCell.y * cellHeight + cellHeight / 2;
-
-    // End adjustment to touch middle of the left edge of the last cell
-    // endX = (lastCell.x * cellWidth);
-    // endY = lastCell.y * cellHeight + cellHeight / 2;
-
-    // End adjustment to touch middle of the bottom edge of the last cell
-    // endX = lastCell.x * cellWidth + cellWidth / 2;
-    // endY = lastCell.y * cellHeight + cellHeight;
-
-    // End adjustment to touch top right corner of the last cell
-    // endX = lastCell.x * cellWidth + cellWidth;
-    // endY = lastCell.y * cellHeight;
-
-    // End adjustment to touch top left corner of the last cell
-    // endX = lastCell.x * cellWidth;
-    // endY = lastCell.y * cellHeight;
-
-    // End adjustment to touch bottom left corner of the last cell
-    // endX = lastCell.x * cellWidth;
-    // endY = lastCell.y * cellHeight + cellHeight;
-
-    // End adjustment to touch bottom right corner of the last cell
-    endX = lastCell.x * cellWidth + cellWidth;
-    endY = lastCell.y * cellHeight + cellHeight;
+    let adjustment = "";
+    switch (direction) {
+      case "up":
+        break;
+      case "down":
+        break;
+      case "right":
+        break;
+      case "left":
+        break;
+      case "up-right":
+        break;
+      case "up-left":
+        break;
+      case "down-right":
+        break;
+      case "down-left":
+        if (rightObstacle && !topObstacle) {
+          console.log("right Obstacle");
+          adjustment = "middleTop";
+        }
+        if (topObstacle && !rightObstacle) {
+          console.log("top Obstacle");
+          adjustment = "middleRight";
+        }
+        if (rightObstacle && topObstacle) {
+          console.log("right and topObstacle");
+          adjustment = "topRightCorner";
+        }
+        if (!rightObstacle && !topObstacle) {
+          // no obstacle top or right
+          // TODO: maybe adjust this but only maybe
+          adjustment = "topRightCorner"
+        }
+        break;
+      case "stationary":
+        break;
+      default:
+        break;
+    }
 
     // function should return x, y coordinates of docking point of edge
+    return this.getAdjustedEndCoordinates(lastCell, cellWidth, cellHeight, adjustment);
+  }
+
+  getAdjustedEndCoordinates(lastCell, cellWidth, cellHeight, adjustment) {
+    let endX, endY;
+
+    // TODO: these need to be adjusted for multiple edges going in on a single node, maybe need to be pivoted to the side a little, and maybe add a variable to each node
+    // which tracks how many ingoing edges it has to adjust accordingly
+    // Parallel edges need to be possible (perhaps by rendering one canvas above the next and adjusting the endcoordinates a little to make it look like they are parallel)
+
+    switch (adjustment) {
+      case "middleTop":
+        // End adjustment to touch the middle of the top edge of the last cell
+        endX = lastCell.x * cellWidth + cellWidth / 2;
+        endY = lastCell.y * cellHeight;
+        break;
+      case "middleRight":
+        // End adjustment to touch middle of the right edge of the last cell
+        endX = lastCell.x * cellWidth + cellWidth;
+        endY = lastCell.y * cellHeight + cellHeight / 2;
+        break;
+      case "middleLeft":
+        // End adjustment to touch middle of the left edge of the last cell
+        endX = lastCell.x * cellWidth;
+        endY = lastCell.y * cellHeight + cellHeight / 2;
+        break;
+      case "middleBottom":
+        // End adjustment to touch middle of the bottom edge of the last cell
+        endX = lastCell.x * cellWidth + cellWidth / 2;
+        endY = lastCell.y * cellHeight + cellHeight;
+        break;
+      case "topRightCorner":
+        // End adjustment to touch top right corner of the last cell
+        endX = lastCell.x * cellWidth + cellWidth;
+        endY = lastCell.y * cellHeight;
+        break;
+      case "topLeftCorner":
+        // End adjustment to touch top left corner of the last cell
+        endX = lastCell.x * cellWidth;
+        endY = lastCell.y * cellHeight;
+        break;
+      case "bottomLeftCorner":
+        // End adjustment to touch bottom left corner of the last cell
+        endX = lastCell.x * cellWidth;
+        endY = lastCell.y * cellHeight + cellHeight;
+        break;
+      case "bottomRightCorner":
+        // End adjustment to touch bottom right corner of the last cell
+        endX = lastCell.x * cellWidth + cellWidth;
+        endY = lastCell.y * cellHeight + cellHeight;
+        break;
+      default:
+        console.error("Invalid adjustment type");
+    }
+
     return { endX, endY };
   }
 
