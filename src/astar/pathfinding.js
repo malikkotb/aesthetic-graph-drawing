@@ -173,15 +173,13 @@ export class PathFinder {
   drawPath(ctx, path, cellWidth, cellHeight) {
     if (path.length < 2) return;
 
-    // TODO: respect OBSTACLES along the path
-    // TODO: adjust direction of start and end point of edge, its still fucked for some configuration of edge-connections
-
     ctx.beginPath();
 
     const firstCell = path[0];
     const secondCell = path[1];
 
     let { startX, startY } = this.getStartCoordinates(firstCell, secondCell, 100, 100);
+    console.log("start X, Y", startX, startY);
 
     ctx.moveTo(startX, startY);
 
@@ -221,8 +219,54 @@ export class PathFinder {
 
     let adjustment = "";
     switch (direction) {
+      case "up":
+        adjustment = "middleBottom";
+        break;
+      case "down":
+        adjustment = "middleTop";
+        break;
+      case "right":
+        adjustment = "middleLeft";
+        break;
+      case "left":
+        adjustment = "middleRight";
+        break;
+      case "up-right":
+        if (rightObstacle && !topObstacle)
+          adjustment = "middleTop"
+        if (topObstacle && !rightObstacle)
+          adjustment = "middleRight"
+        if (topObstacle && rightObstacle || !topObstacle && !rightObstacle)
+          adjustment = "topRightCorner"
+        break;
+      case "up-left":
+        if (leftObstacle && !topObstacle)
+          adjustment = "middleTop";
+        if (topObstacle && !leftObstacle)
+          adjustment = "middleLeft"
+        if (topObstacle && leftObstacle || !topObstacle && !leftObstacle)
+          adjustment = "topLeftCorner"
+        break;
+      case "down-right":
+        if (rightObstacle && !bottomObstacle)
+          adjustment = "middleBottom"
+        if (bottomObstacle && !rightObstacle)
+          adjustment = "middleRight"
+        if (bottomObstacle && rightObstacle || !bottomObstacle && !rightObstacle)
+          adjustment = "bottomRightCorner"
+        break;
+      case "down-left":
+        if (leftObstacle && !bottomObstacle)
+          adjustment = "middleBottom"
+        if (bottomObstacle && !leftObstacle)
+          adjustment = "middleLeft"
+        if (leftObstacle && bottomObstacle || !leftObstacle && !bottomObstacle)
+          adjustment = "bottomLeftCorner"
+        break;
+      default:
+        break;
     }
-    return this.getAdjustedEndCoordinates(lastCell, cellWidth, cellHeight, adjustment);
+    return this.getAdjustedStartCoordinates(firstCell, cellWidth, cellHeight, adjustment);
   }
 
   getAdjustedStartCoordinates(firstCell, cellWidth, cellHeight, adjustment) {
