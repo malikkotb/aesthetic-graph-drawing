@@ -257,36 +257,64 @@ export class PathFinder {
     let adjustment = "";
     switch (direction) {
       case "up":
+        adjustment = "middleBottom"
         break;
       case "down":
+        adjustment = "middleTop"
         break;
       case "right":
+        adjustment = "middleLeft"
         break;
       case "left":
+        adjustment = "middleRight"
         break;
       case "up-right":
+        if (leftObstacle && !bottomObstacle) {
+          adjustment = "middleBottom";
+        }
+        if (bottomObstacle && !leftObstacle) {
+          adjustment = "middleLeft";
+        }
+        if ((leftObstacle && bottomObstacle) || (!leftObstacle && !bottomObstacle)) {
+          adjustment = "bottomLeftCorner";
+        }
         break;
       case "up-left":
+        if (rightObstacle && !bottomObstacle) {
+          adjustment = "middleBottom";
+        }
+        if (bottomObstacle && !leftObstacle) {
+          adjustment = "middleRight";
+        }
+        if ((rightObstacle && bottomObstacle) || (!rightObstacle && !bottomObstacle)) {
+          adjustment = "bottomRightCorner";
+        }
         break;
       case "down-right":
+        if (leftObstacle && !topObstacle) {
+          adjustment = "middleTop";
+        }
+        if (topObstacle && !leftObstacle) {
+          adjustment = "middleLeft";
+        }
+        if ((leftObstacle && topObstacle) || (!leftObstacle && !topObstacle)) {
+          adjustment = "topLeftCorner";
+        }
         break;
       case "down-left":
         if (rightObstacle && !topObstacle) {
-          console.log("right Obstacle");
           adjustment = "middleTop";
         }
         if (topObstacle && !rightObstacle) {
-          console.log("top Obstacle");
           adjustment = "middleRight";
         }
         if (rightObstacle && topObstacle) {
-          console.log("right and topObstacle");
           adjustment = "topRightCorner";
         }
         if (!rightObstacle && !topObstacle) {
           // no obstacle top or right
           // TODO: maybe adjust this but only maybe
-          adjustment = "topRightCorner"
+          adjustment = "topRightCorner";
         }
         break;
       case "stationary":
