@@ -6,6 +6,7 @@ export class PathFinder {
     this.grid = grid;
     this.context = context;
     this.edgeIndex = 0;
+    this.paths = []
   }
 
   // TODO: will have to loop through all edge-Connections and call this method for each
@@ -172,8 +173,11 @@ export class PathFinder {
     this.openSet = [];
     this.closedSet = [];
 
-    // draw the edge using path
-    this.drawPath(this.context, path, 100, 100);
+    // draw the edge individually using path
+    // this.drawPath(this.context, path, 100, 100);
+
+    // adding the new path to allPaths to render them at the end simulatneously. Another workaround could be adding multiple canvas layers.
+    this.paths.push(path)
 
     console.log("");
     console.log("");
@@ -249,7 +253,7 @@ export class PathFinder {
 
     ctx.stroke();
   }
-  
+
 
   getStartCoordinates(firstCell, secondCell, cellWidth, cellHeight) {
     // direction for first to second cell

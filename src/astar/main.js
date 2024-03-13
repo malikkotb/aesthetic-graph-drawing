@@ -16,6 +16,7 @@ window.addEventListener("load", () => {
   let edgeConnections = [];
 
   let grid = null;
+  let paths = [];
 
   // get state and edge configuration from input
   document.getElementById("updateButton").addEventListener("click", updateGraph);
@@ -60,6 +61,12 @@ window.addEventListener("load", () => {
       redrawGraph(nodeCoordinates);
       
     });
+
+    // draw all the paths at once
+    console.log("drawing all paths");
+    console.log(a_star.paths);
+    a_star.drawAllPaths(ctx, a_star.paths, 100, 100)
+
   }
 
   function processNodeInput(nodeInput) {
