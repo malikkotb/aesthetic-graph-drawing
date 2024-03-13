@@ -5,6 +5,7 @@ export class PathFinder {
     this.closedSet = [];
     this.grid = grid;
     this.context = context;
+    this.edgeIndex = 0;
   }
 
   // TODO: will have to loop through all edge-Connections and call this method for each
@@ -23,8 +24,6 @@ export class PathFinder {
 
     let count = 0;
 
-    // setTimeout(() => {
-    // timeout reached
     while (this.openSet.length > 0) {
       let currentCell = this.openSet[0]; // current node with lowest f_cost
 
@@ -115,11 +114,20 @@ export class PathFinder {
 
       count++;
     }
-    // }, 1000);
   }
 
   // retrace steps to get path from startCell to targetCell
   retracePath(startCell, targetCell) {
+    // TODO: Requirements:
+    // - need to be able to draw a single path on one canvas layer probably, otherwise it is fucked somehow
+    // - need to be able to remove the obstacles after every iteration of an edge
+    // - draw then nodes first on one layer
+    //    then for each iteration: run algorithm once meaning:
+    //    1. run A* with obstacles being other edges and nodes and include weights -> meaning perhaps make cells also obstacles that are close to nodes
+    //    2. draw the edge through the smoothest path
+    //    3. remove all obstacles and only show the rendered edge
+    //    4. add new canvas layer repeat for new edge
+
     const path = [];
     let currentCell = targetCell;
 
@@ -149,7 +157,6 @@ export class PathFinder {
     console.log("path", path);
 
     // remove labels, markings of other cells
-    // setTimeout(() => {
     for (let cell of this.openSet) {
       cell.clearCell(this.context, 100, 100);
     }
@@ -171,12 +178,11 @@ export class PathFinder {
     console.log("");
     console.log("");
     console.log("");
-
-    // }, 1000);
   }
 
   // draw edge
   drawPath(ctx, path, cellWidth, cellHeight) {
+    if (this.edgeIndex > 0) return;
     if (path.length < 2) return;
 
     ctx.beginPath();
@@ -206,9 +212,44 @@ export class PathFinder {
     console.log("end X, Y", endX, endY);
 
     ctx.lineTo(endX, endY);
+    if (this.edgeIndex === 0) {
+      ctx.strokeStyle = "red";
+    } else {
+      ctx.strokeStyle = "lightgreen";
+    }
+    ctx.stroke();
+    this.edgeIndex++;
+  }
+
+  // different apporach, drawing all paths at once
+  drawAllPaths(ctx, paths, cellWidth, cellHeight) {
+    ctx.beginPath();
+
+    for (const path of paths) {
+      if (path.length < 2) continue;
+
+      const firstCell = path[0];
+      const secondCell = path[1];
+
+      let { startX, startY } = this.getStartCoordinates(firstCell, secondCell, cellWidth, cellHeight);
+      ctx.moveTo(startX, startY);
+
+      for (let i = 1; i < path.length - 1; i++) {
+        let x = path[i].x * cellWidth + cellWidth / 2;
+        let y = path[i].y * cellHeight + cellHeight / 2;
+        ctx.lineTo(x, y);
+      }
+
+      const lastCell = path[path.length - 1];
+      const secondLastCell = path[path.length - 2];
+
+      let { endX, endY } = this.getEndCoordinates(lastCell, secondLastCell, cellWidth, cellHeight);
+      ctx.lineTo(endX, endY);
+    }
 
     ctx.stroke();
   }
+  
 
   getStartCoordinates(firstCell, secondCell, cellWidth, cellHeight) {
     // direction for first to second cell
@@ -238,36 +279,24 @@ export class PathFinder {
         adjustment = "middleRight";
         break;
       case "up-right":
-        if (rightObstacle && !topObstacle)
-          adjustment = "middleTop"
-        if (topObstacle && !rightObstacle)
-          adjustment = "middleRight"
-        if (topObstacle && rightObstacle || !topObstacle && !rightObstacle)
-          adjustment = "topRightCorner"
+        if (rightObstacle && !topObstacle) adjustment = "middleTop";
+        if (topObstacle && !rightObstacle) adjustment = "middleRight";
+        if ((topObstacle && rightObstacle) || (!topObstacle && !rightObstacle)) adjustment = "topRightCorner";
         break;
       case "up-left":
-        if (leftObstacle && !topObstacle)
-          adjustment = "middleTop";
-        if (topObstacle && !leftObstacle)
-          adjustment = "middleLeft"
-        if (topObstacle && leftObstacle || !topObstacle && !leftObstacle)
-          adjustment = "topLeftCorner"
+        if (leftObstacle && !topObstacle) adjustment = "middleTop";
+        if (topObstacle && !leftObstacle) adjustment = "middleLeft";
+        if ((topObstacle && leftObstacle) || (!topObstacle && !leftObstacle)) adjustment = "topLeftCorner";
         break;
       case "down-right":
-        if (rightObstacle && !bottomObstacle)
-          adjustment = "middleBottom"
-        if (bottomObstacle && !rightObstacle)
-          adjustment = "middleRight"
-        if (bottomObstacle && rightObstacle || !bottomObstacle && !rightObstacle)
-          adjustment = "bottomRightCorner"
+        if (rightObstacle && !bottomObstacle) adjustment = "middleBottom";
+        if (bottomObstacle && !rightObstacle) adjustment = "middleRight";
+        if ((bottomObstacle && rightObstacle) || (!bottomObstacle && !rightObstacle)) adjustment = "bottomRightCorner";
         break;
       case "down-left":
-        if (leftObstacle && !bottomObstacle)
-          adjustment = "middleBottom"
-        if (bottomObstacle && !leftObstacle)
-          adjustment = "middleLeft"
-        if (leftObstacle && bottomObstacle || !leftObstacle && !bottomObstacle)
-          adjustment = "bottomLeftCorner"
+        if (leftObstacle && !bottomObstacle) adjustment = "middleBottom";
+        if (bottomObstacle && !leftObstacle) adjustment = "middleLeft";
+        if ((leftObstacle && bottomObstacle) || (!leftObstacle && !bottomObstacle)) adjustment = "bottomLeftCorner";
         break;
       default:
         break;
