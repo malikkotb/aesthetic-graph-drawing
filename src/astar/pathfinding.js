@@ -6,7 +6,7 @@ export class PathFinder {
     this.grid = grid;
     this.context = context;
     this.edgeIndex = 0;
-    this.paths = []
+    this.paths = [];
   }
 
   // TODO: will have to loop through all edge-Connections and call this method for each
@@ -117,13 +117,37 @@ export class PathFinder {
     }
   }
 
+  // TODO: (getImageData )use this function to check if two edges would be rendered on the same side of a Node.
+  //     Then if two edges are rendered on the same side of a node. Then I can determine the distance between them
+  //     bzw. adjust the docking points on that edge slightly. According to the specification of my aesthetic criteria.
+
+  isCellOccupied(ctx, cellX, cellY, cellWidth, cellHeight) {
+    // Calculate the pixel coordinates of the cell
+    const pixelX = cellX * cellWidth;
+    const pixelY = cellY * cellHeight;
+
+    // Get the pixel data of the cell
+    const imageData = ctx.getImageData(pixelX, pixelY, cellWidth, cellHeight);
+    const data = imageData.data;
+
+    // Loop through the pixel data and check for non-transparent pixels
+    for (let i = 0; i < data.length; i += 4) {
+      // Check if the alpha value is greater than 0 (non-transparent)
+      if (data[i + 3] > 0) {
+        return true; // Cell is occupied
+      }
+    }
+
+    return false; // Cell is empty
+  }
+
   // retrace steps to get path from startCell to targetCell
   retracePath(startCell, targetCell) {
     // TODO: Requirements:
     // - need to be able to draw a single path on one canvas layer probably, otherwise it is fucked somehow
-    // - need to be able to remove the obstacles after every iteration of an edge
-    // - draw then nodes first on one layer
-    //    then for each iteration: run algorithm once meaning:
+    // - need to be able to remove the obstacle-cells after every iteration of an edge
+    // - draw the nodes first on one layer
+    //    then for each iteration: run algorithm once, meaning:
     //    1. run A* with obstacles being other edges and nodes and include weights -> meaning perhaps make cells also obstacles that are close to nodes
     //    2. draw the edge through the smoothest path
     //    3. remove all obstacles and only show the rendered edge
@@ -177,7 +201,7 @@ export class PathFinder {
     // this.drawPath(this.context, path, 100, 100);
 
     // adding the new path to allPaths to render them at the end simulatneously. Another workaround could be adding multiple canvas layers.
-    this.paths.push(path)
+    this.paths.push(path);
 
     console.log("");
     console.log("");
@@ -253,7 +277,6 @@ export class PathFinder {
 
     ctx.stroke();
   }
-
 
   getStartCoordinates(firstCell, secondCell, cellWidth, cellHeight) {
     // direction for first to second cell
