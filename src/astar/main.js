@@ -6,11 +6,12 @@ window.addEventListener("load", () => {
   /** @type {CanvasRenderingContext2D} */
   const ctx = canvas.getContext("2d");
 
-  canvas.height = 1000;
-  canvas.width = 1000;
+  // customizable: canvas.height, canvas.width, gridHeight, gridWidth
+  canvas.height = 2000;
+  canvas.width = 1100;
 
   const gridHeight = 100; // 100 cells on y-axis
-  const gridWidth = 100; // 100 cells on x-axis
+  const gridWidth = 10; // 100 cells on x-axis
 
   let nodeCoordinates = [];
   let edgeConnections = [];
