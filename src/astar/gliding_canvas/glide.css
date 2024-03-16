@@ -16,17 +16,63 @@ body {
 }
 
 #config {
-  color: white;
+  color: black;
   display: flex;
   flex-direction: column;
   padding: 20px;
-  gap: 20px;
+  gap: 5px;
 }
 
 #grid {
   background-color: white;
   /* height: 150vmax; */
   /* width: 150vmax; */
+}
+
+.float {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  bottom: 40px;
+  left: 40px;
+  background-color: #0c9;
+  color: #fff;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: none;
+  box-shadow: 2px 2px 3px green;
+  text-decoration: none;
+}
+
+.popup {
+  display: none; /* Hide the popup by default */
+  position: fixed; /* Position the popup relative to the viewport */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+}
+
+.popup-content {
+  background-color: white;
+  width: 50%;
+  margin: 100px auto; /* Center the popup vertically and horizontally */
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Add shadow effect */
+}
+
+.close {
+  float: right;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: red;
 }
 
 .tile {

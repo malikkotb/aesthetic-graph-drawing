@@ -28,6 +28,30 @@ window.addEventListener("load", () => {
   // get a specific cell (and its marked-status, so its color)
   document.getElementById("cellButton").addEventListener("click", () => grid.getCell(3, 4));
 
+  // Get the button and the popup
+  const popupBtn = document.getElementById("popupBtn");
+  const popup = document.getElementById("popup");
+
+  // Get the close button inside the popup
+  const closeBtn = document.getElementById("closeBtn");
+
+  // When the button is clicked, show the popup
+  popupBtn.addEventListener("click", function () {
+    popup.style.display = "block";
+  });
+
+  // When the close button is clicked, hide the popup
+  closeBtn.addEventListener("click", function () {
+    popup.style.display = "none";
+  });
+
+  // When the user clicks anywhere outside of the popup, close it
+  window.addEventListener("click", function (event) {
+    if (event.target === popup) {
+      popup.style.display = "none";
+    }
+  });
+
   function updateGraph() {
     const nodeInput = document.getElementById("nodeInput").value;
     if (nodeInput) processNodeInput(nodeInput);
@@ -60,14 +84,12 @@ window.addEventListener("load", () => {
       targetCell.draw(ctx, 100, 100, targetCell.state);
 
       redrawGraph(nodeCoordinates);
-      
     });
 
     // draw all the paths at once
     console.log("drawing all paths");
     console.log(a_star.paths);
-    a_star.drawAllPaths(ctx, a_star.paths, 100, 100)
-
+    a_star.drawAllPaths(ctx, a_star.paths, 100, 100);
   }
 
   function processNodeInput(nodeInput) {
