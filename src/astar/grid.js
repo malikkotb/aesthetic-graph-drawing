@@ -25,10 +25,9 @@ export class Grid {
     for (let x = 0; x < width; x++) {
       this.grid[x] = [];
       for (let y = 0; y < height; y++) {
-        const cellX = x * 10; // adjust to have same dimenions as pixels (cell = 100x100 pixels)
+        const cellX = x * 10; // TODO: adjust to have same dimenions as pixels (cell = 100x100 pixels)
         const cellY = y * 10;
 
-        //TODO: add functionality for MARKED-status for A* (start, end, open, closed)
         let state = "";
 
         //TODO: optimize this loop, as its now getting called 10000 times for each node

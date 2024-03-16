@@ -8,10 +8,10 @@ window.addEventListener("load", () => {
 
   // customizable: canvas.height, canvas.width, gridHeight, gridWidth
   canvas.height = 2000;
-  canvas.width = 1100;
+  canvas.width = 2000;
 
-  const gridHeight = 100; // 100 cells on y-axis
-  const gridWidth = 10; // 100 cells on x-axis
+  const gridHeight = 20; // 100 cells on y-axis
+  const gridWidth = 20; // 100 cells on x-axis
 
   let nodeCoordinates = [];
   let edgeConnections = [];
