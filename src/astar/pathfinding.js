@@ -1,5 +1,5 @@
 export class PathFinder {
-  constructor(context, grid) {
+  constructor(context, grid, cellDim) {
     // open set of cells, can be optimized to use a Heap https://stackfull.dev/heaps-in-javascript
     this.openSet = [];
     this.closedSet = [];
@@ -7,6 +7,8 @@ export class PathFinder {
     this.context = context;
     this.edgeIndex = 0;
     this.paths = [];
+    this.cellDim = cellDim; // dimensions of a cell in this current config (canvas.height / gridHeight)
+    console.log("cellDimensions", this.cellDim);
   }
 
   // TODO: will have to loop through all edge-Connections and call this method for each
@@ -19,8 +21,8 @@ export class PathFinder {
     targetCell.state = "END";
     startCell.draw(this.context, 100, 100, startCell.state);
     targetCell.draw(this.context, 100, 100, targetCell.state);
-
-    // add starting to node to Open Set
+    return;
+    // add starting node to Open Set
     this.openSet.push(startCell);
 
     let count = 0;

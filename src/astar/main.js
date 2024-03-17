@@ -11,7 +11,9 @@ window.addEventListener("load", () => {
   canvas.width = 1000;
 
   const gridHeight = 20; // cells on y-axis
-  const gridWidth = 20;  // cells on x-axis
+  const gridWidth = 20; // cells on x-axis
+
+  const cellDim = canvas.height / gridHeight;
 
   let nodeCoordinates = [];
   let edgeConnections = [];
@@ -59,14 +61,15 @@ window.addEventListener("load", () => {
     if (edgeInput) applyUserConnections(nodeCoordinates, edgeInput); // get Edge-Connection configs from user input
 
     grid = new Grid(ctx, gridWidth, gridHeight, nodeCoordinates, canvas.height); // Create the grid
-    // redrawGraph(nodeCoordinates); // draw nodes
+    redrawGraph(nodeCoordinates); // draw nodes
   }
 
   function findPath() {
-    const a_star = new PathFinder(ctx, grid);
+    const a_star = new PathFinder(ctx, grid, cellDim);
     edgeConnections.map((edge) => {
-      // TODO: figure out what Cell should be startCell
       // TODO: make applicable for nodes covering multiple cells, right now this is for 1 node corresponding to 1 cell
+
+
       // Corresponding Cell -> coordinates in grid
       const startCellPos = { x: edge.startNode.x / 100, y: edge.startNode.y / 100 };
       const targetCellPos = { x: edge.targetNode.x / 100, y: edge.targetNode.y / 100 };
@@ -74,15 +77,17 @@ window.addEventListener("load", () => {
       const targetCell = grid.getCell(targetCellPos.x, targetCellPos.y);
 
       a_star.findPath(startCell, targetCell);
+
+      // TODO: can be commented out for testing:
       // set START and END cells back to "OBSTACLE" for next iteration of a*
       // console.log("startCell: ", grid.getCell(startCellPos.x, startCellPos.y));
-      startCell.state = "OBSTACLE";
-      targetCell.state = "OBSTACLE";
-      // draw nodes and obstacles again before executing net iteration (in main.js)
-      startCell.draw(ctx, 100, 100, startCell.state);
-      targetCell.draw(ctx, 100, 100, targetCell.state);
+      // startCell.state = "OBSTACLE";
+      // targetCell.state = "OBSTACLE";
+      // // draw nodes and obstacles again before executing net iteration (in main.js)
+      // startCell.draw(ctx, 100, 100, startCell.state);
+      // targetCell.draw(ctx, 100, 100, targetCell.state);
 
-      redrawGraph(nodeCoordinates);
+      redrawGraph(nodeCoordinates); // re-draw the ndoes on the graph for next iteration
     });
 
     // draw all the paths at once
