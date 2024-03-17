@@ -2,7 +2,7 @@ import { Cell } from "./Cell.js";
 // we need a 2d array of Cells (representing our grid)
 
 export class Grid {
-  constructor(context, width, height, nodeCoordinates) {
+  constructor(context, width, height, nodeCoordinates, canvasHeight) {
     this.context = context;
     // dimensions of grid-size
     this.width = width;
@@ -10,6 +10,8 @@ export class Grid {
     this.grid = [];
     this.path = [];
     this.nodeCoordinates = nodeCoordinates; // list of coordinates of nodes
+
+    this.canvasHeight = canvasHeight; // use to calculate dimensions (width and height of cells)
 
     // Steps before running A*
     // 1. Create the grid (not marked yet; just the grid)
@@ -20,6 +22,8 @@ export class Grid {
     // Top-Right Corner: (nodeX + nodeWidth, nodeY)
     // Bottom-Left Corner: (nodeX, nodeY + nodeHeight)
     // Bottom-Right Corner: (nodeX + nodeWidth, nodeY + nodeHeight)
+
+    const cellDim = canvasHeight / this.width; // cell Dimensions
 
     // create the grid
     for (let x = 0; x < width; x++) {
@@ -52,7 +56,7 @@ export class Grid {
         if (this.grid[x][y]) {
           console.log("already an objete here oui hahah");
         }
-        this.grid[x][y] = new Cell(context, x, y, 100, 100, state); // cellWidth and height are 100 (bc. grid right now is 1000x1000 -> 10 cells)
+        this.grid[x][y] = new Cell(context, x, y, cellDim, cellDim, state); // TODO: adjust; cellWidth and height are 100 (bc. grid right now is 1000x1000 -> 10 cells)
       }
     }
   }

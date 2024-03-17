@@ -7,11 +7,11 @@ window.addEventListener("load", () => {
   const ctx = canvas.getContext("2d");
 
   // customizable: canvas.height, canvas.width, gridHeight, gridWidth
-  canvas.height = 2000;
-  canvas.width = 2000;
+  canvas.height = 1000;
+  canvas.width = 1000;
 
-  const gridHeight = 20; // 100 cells on y-axis
-  const gridWidth = 20; // 100 cells on x-axis
+  const gridHeight = 20; // cells on y-axis
+  const gridWidth = 20;  // cells on x-axis
 
   let nodeCoordinates = [];
   let edgeConnections = [];
@@ -26,13 +26,11 @@ window.addEventListener("load", () => {
   document.getElementById("findPathBtn").addEventListener("click", findPath);
 
   // get a specific cell (and its marked-status, so its color)
-  document.getElementById("cellButton").addEventListener("click", () => grid.getCell(3, 4));
+  // document.getElementById("cellButton").addEventListener("click", () => grid.getCell(3, 4));
 
-  // Get the button and the popup
+  ///// popup button config
   const popupBtn = document.getElementById("popupBtn");
   const popup = document.getElementById("popup");
-
-  // Get the close button inside the popup
   const closeBtn = document.getElementById("closeBtn");
 
   // When the button is clicked, show the popup
@@ -51,6 +49,7 @@ window.addEventListener("load", () => {
       popup.style.display = "none";
     }
   });
+  ///// end of popup button config
 
   function updateGraph() {
     const nodeInput = document.getElementById("nodeInput").value;
@@ -59,8 +58,8 @@ window.addEventListener("load", () => {
     const edgeInput = document.getElementById("edgeInput").value;
     if (edgeInput) applyUserConnections(nodeCoordinates, edgeInput); // get Edge-Connection configs from user input
 
-    grid = new Grid(ctx, gridWidth, gridHeight, nodeCoordinates); // Create the grid
-    redrawGraph(nodeCoordinates); // draw nodes
+    grid = new Grid(ctx, gridWidth, gridHeight, nodeCoordinates, canvas.height); // Create the grid
+    // redrawGraph(nodeCoordinates); // draw nodes
   }
 
   function findPath() {
