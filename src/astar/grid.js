@@ -24,13 +24,14 @@ export class Grid {
     // Bottom-Right Corner: (nodeX + nodeWidth, nodeY + nodeHeight)
 
     const cellDim = canvasHeight / this.width; // cell Dimensions
+    const cellAdjustment = cellDim / 10;
 
     // create the grid
     for (let x = 0; x < width; x++) {
       this.grid[x] = [];
       for (let y = 0; y < height; y++) {
-        const cellX = x * 10; // TODO: adjust to have same dimenions as pixels (cell = 100x100 pixels)
-        const cellY = y * 10;
+        const cellX = x * cellAdjustment; 
+        const cellY = y * cellAdjustment;
 
         let state = "";
 
@@ -39,8 +40,8 @@ export class Grid {
           const { x: nodeX, y: nodeY, width: nodeWidth, height: nodeHeight } = node;
 
           // get area of entire cell
-          const cellRight = cellX + 10; // Assuming cellSize is 10
-          const cellBottom = cellY + 10;
+          const cellRight = cellX + cellAdjustment;
+          const cellBottom = cellY + cellAdjustment;
 
           // Check if any part of the node intersects with the cell's area
           if (
@@ -54,9 +55,9 @@ export class Grid {
         });
 
         if (this.grid[x][y]) {
-          console.log("already an objete here oui hahah");
+          console.log("already an objete here oui");
         }
-        this.grid[x][y] = new Cell(context, x, y, cellDim, cellDim, state); // TODO: adjust; cellWidth and height are 100 (bc. grid right now is 1000x1000 -> 10 cells)
+        this.grid[x][y] = new Cell(context, x, y, cellDim, cellDim, state); // cellWidth and height are 100 (bc. grid right now is 1000x1000 -> 10 cells)
       }
     }
   }
