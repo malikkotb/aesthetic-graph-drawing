@@ -8,7 +8,6 @@ export class PathFinder {
     this.edgeIndex = 0;
     this.paths = [];
     this.cellDim = cellDim; // dimensions of a cell in this current config (canvas.height / gridHeight)
-    console.log("cellDimensions", this.cellDim);
   }
 
   // TODO: will have to loop through all edge-Connections and call this method for each
@@ -17,8 +16,12 @@ export class PathFinder {
     // const startCell = this.grid.getCell(startCellPos.x, startCellPos.y);
     // const targetCell = this.grid.getCell(targetCellPos.x, targetCellPos.y);
 
+    console.log(targetCell);
+
     startCell.state = "START";
     targetCell.state = "END";
+
+    // TODO: need to draw each cell for the startNode, as a node can cover multiple cells
     startCell.draw(this.context, 100, 100, startCell.state);
     targetCell.draw(this.context, 100, 100, targetCell.state);
     return;

@@ -69,10 +69,31 @@ window.addEventListener("load", () => {
     edgeConnections.map((edge) => {
       // TODO: make applicable for nodes covering multiple cells, right now this is for 1 node corresponding to 1 cell
 
-
       // Corresponding Cell -> coordinates in grid
       const startCellPos = { x: edge.startNode.x / 100, y: edge.startNode.y / 100 };
       const targetCellPos = { x: edge.targetNode.x / 100, y: edge.targetNode.y / 100 };
+      console.log("startCellPos", startCellPos);
+      console.log("targetCellPos", targetCellPos);
+      console.log("edge.startNode", edge.startNode);
+
+      // array of cells covered by starting and target node
+      const startingCells = [];
+      const targetingCells = [];
+
+
+      // TODO: need to create objects in startin Cells for the coordinates of a cell
+      // because right now they are just being added after another 
+      for (let i = edge.startNode.x; i < edge.startNode.x + edge.startNode.width; i += cellDim) {
+        // loop for cells in x direction of startNode
+        startingCells.push(i)
+      }
+      for (let i = edge.startNode.y; i < edge.startNode.y + edge.startNode.height; i += cellDim) {
+        // loop for cells in y direction of startNode
+        startingCells.push(i)
+      }
+
+      console.log("startingCells", startingCells);
+
       const startCell = grid.getCell(startCellPos.x, startCellPos.y);
       const targetCell = grid.getCell(targetCellPos.x, targetCellPos.y);
 
