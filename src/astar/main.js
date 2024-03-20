@@ -72,34 +72,56 @@ window.addEventListener("load", () => {
       // Corresponding Cell -> coordinates in grid
       const startCellPos = { x: edge.startNode.x / 100, y: edge.startNode.y / 100 };
       const targetCellPos = { x: edge.targetNode.x / 100, y: edge.targetNode.y / 100 };
-      console.log("startCellPos", startCellPos);
-      console.log("targetCellPos", targetCellPos);
-      console.log("edge.startNode", edge.startNode);
+      console.log("edge.startNode", edge);
 
       // array of cells covered by starting and target node
-      const startingCells = [];
-      const targetingCells = [];
+      let startingCells = [];
+      let targetingCells = [];
 
-
-      // TODO: need to create objects in startin Cells for the coordinates of a cell
-      // because right now they are just being added after another 
       for (let i = edge.startNode.x; i < edge.startNode.x + edge.startNode.width; i += cellDim) {
         // loop for cells in x direction of startNode
-        startingCells.push(i)
+        startingCells.push({ x: i });
       }
+
       for (let i = edge.startNode.y; i < edge.startNode.y + edge.startNode.height; i += cellDim) {
         // loop for cells in y direction of startNode
-        startingCells.push(i)
+        startingCells.push({ y: i });
       }
 
-      console.log("startingCells", startingCells);
+      for (let i = edge.targetNode.x; i < edge.targetNode.x + edge.targetNode.width; i += cellDim) {
+        // loop for cells in x direction of targetNode
+        targetingCells.push({ x: i });
+      }
 
-      const startCell = grid.getCell(startCellPos.x, startCellPos.y);
+      for (let i = edge.targetNode.y; i < edge.targetNode.y + edge.targetNode.height; i += cellDim) {
+        // loop for cells in y direction of targetNode
+        targetingCells.push({ y: i });
+      }
+
+      const resultingStartingCells = combineCells(startingCells);
+      const resultTargetCells = combineCells(targetingCells);
+
+      // TODO: need to specify the actual starting Cell now, because now I have multiple cells
+      // of course for one node.
+
+      //TODO: get all cells of starting node
+      resultingStartingCells.forEach(obj => {
+        obj = grid.getCell(obj.x, obj.y)
+      })
+
+      console.log(resultingStartingCells);
+
+      const startCell = grid.getCell(startCellPos.x, startCellPos.y); // this is just getting one Cell
       const targetCell = grid.getCell(targetCellPos.x, targetCellPos.y);
+
+      startCell.state = "START";
+      targetCell.state = "END";
+      startCell.draw(this.context, 50, 50, startCell.state);
+      targetCell.draw(this.context, 50, 50, targetCell.state);
 
       a_star.findPath(startCell, targetCell);
 
-      // TODO: can be commented out for testing:
+      // TODO: commented out for testing:
       // set START and END cells back to "OBSTACLE" for next iteration of a*
       // console.log("startCell: ", grid.getCell(startCellPos.x, startCellPos.y));
       // startCell.state = "OBSTACLE";
@@ -115,6 +137,25 @@ window.addEventListener("load", () => {
     console.log("drawing all paths");
     console.log(a_star.paths);
     a_star.drawAllPaths(ctx, a_star.paths, 100, 100);
+  }
+
+  function combineCells(arrayOfObjects) {
+    let resultCells = [];
+
+    arrayOfObjects.forEach((objX) => {
+      arrayOfObjects.forEach((objY) => {
+        let newObj = { ...objX, ...objY };
+        if (newObj.x === undefined || newObj.y === undefined) return;
+        resultCells.push(newObj);
+      });
+    });
+
+    // remove duplicate objects
+    resultCells = resultCells.filter((obj, index) => {
+      return resultCells.findIndex((o) => o.x === obj.x && o.y === obj.y) === index;
+    });
+
+    return resultCells;
   }
 
   function processNodeInput(nodeInput) {
