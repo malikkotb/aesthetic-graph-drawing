@@ -27,9 +27,6 @@ window.addEventListener("load", () => {
   // call path finding meethod
   document.getElementById("findPathBtn").addEventListener("click", findPath);
 
-  // get a specific cell (and its marked-status, so its color)
-  // document.getElementById("cellButton").addEventListener("click", () => grid.getCell(3, 4));
-
   ///// popup button config
   const popupBtn = document.getElementById("popupBtn");
   const popup = document.getElementById("popup");
@@ -98,19 +95,31 @@ window.addEventListener("load", () => {
         targetingCells.push({ y: i });
       }
 
-      const resultingStartingCells = combineCells(startingCells);
-      const resultTargetCells = combineCells(targetingCells);
+      let resultStartCells = combineCells(startingCells);
+      let resultTargetCells = combineCells(targetingCells);
 
       // TODO: need to specify the actual starting Cell now, because now I have multiple cells
       // of course for one node.
 
-      //TODO: get all cells of starting node
-      resultingStartingCells.forEach(obj => {
-        obj = grid.getCell(obj.x, obj.y)
-      })
+      
 
-      console.log(resultingStartingCells);
 
+      // get all cells of starting node
+      resultStartCells = resultStartCells.map(obj => {
+        return grid.getCell(obj.x / cellDim, obj.y / cellDim);
+      });
+      resultTargetCells = resultTargetCells.map(obj => {
+        // console.log(grid.getCell(obj.x / 50, obj.y / 50)); // cellDim = 50;
+        return grid.getCell(obj.x / cellDim, obj.y / cellDim);
+      });
+
+      console.log("resultStartCells: ", resultStartCells);
+      console.log("resultTargetCells: ", resultTargetCells);
+
+
+
+      console.log("");
+      console.log("");
       const startCell = grid.getCell(startCellPos.x, startCellPos.y); // this is just getting one Cell
       const targetCell = grid.getCell(targetCellPos.x, targetCellPos.y);
 

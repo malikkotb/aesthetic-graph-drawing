@@ -67,7 +67,7 @@ export class Grid {
     if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
       return this.grid[x][y];
     }
-    return null; // Return null if the coordinates are out of bounds
+    // return null; // Return null if the coordinates are out of bounds
   }
 
   getNeighbors(cell) {
