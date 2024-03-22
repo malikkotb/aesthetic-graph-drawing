@@ -124,12 +124,12 @@ window.addEventListener("load", () => {
 
       // TODO: commented out for testing:
       // set START and END cells back to "OBSTACLE" for next iteration of a*
-      // console.log("startCell: ", grid.getCell(startCellPos.x, startCellPos.y));
-      // startCell.state = "OBSTACLE";
-      // targetCell.state = "OBSTACLE";
-      // // draw nodes and obstacles again before executing net iteration (in main.js)
-      // startCell.draw(ctx, cellDim, cellDim, startCell.state);
-      // targetCell.draw(ctx, cellDim, cellDim, targetCell.state);
+      console.log("startCell: ", grid.getCell(startCellPos.x, startCellPos.y));
+      startCell.state = "OBSTACLE";
+      targetCell.state = "OBSTACLE";
+      // draw nodes and obstacles again before executing net iteration (in main.js)
+      startCell.draw(ctx, cellDim, cellDim, startCell.state);
+      targetCell.draw(ctx, cellDim, cellDim, targetCell.state);
 
       redrawGraph(nodeCoordinates); // re-draw the ndoes on the graph for next iteration
     });
@@ -143,8 +143,6 @@ window.addEventListener("load", () => {
   function specifyCell(availableCells) {
     return availableCells[0];
   }
-
-
 
 
   function combineCells(arrayOfObjects) {

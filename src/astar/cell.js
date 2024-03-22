@@ -40,7 +40,7 @@ export class Cell {
         color = "green";
         break;
       case "CLOSED":
-        color = "red";
+        color = "pink";
         break;
       case "OBSTACLE":
         color = "gray";
@@ -60,13 +60,13 @@ export class Cell {
     ctx.strokeRect(xPosition, yPosition, cellWidth, cellHeight);
 
     // render label
-    if (state === "OPEN" || state === "CLOSED" || state === "FINISHED" || state === "END") {
-      ctx.fillStyle = "black";
-      ctx.font = "16px Arial"; // adjust font size and style as needed
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(label, xPosition + cellWidth / 2, yPosition + cellHeight / 2);
-    }
+    // if (state === "OPEN" || state === "CLOSED" || state === "FINISHED" || state === "END") {
+    //   ctx.fillStyle = "black";
+    //   ctx.font = "16px Arial"; // adjust font size and style as needed
+    //   ctx.textAlign = "center";
+    //   ctx.textBaseline = "middle";
+    //   ctx.fillText(label, xPosition + cellWidth / 2, yPosition + cellHeight / 2);
+    // }
   }
 
   clearCell(ctx, cellWidth, cellHeight) {

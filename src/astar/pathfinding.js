@@ -13,10 +13,6 @@ export class PathFinder {
   // TODO: will have to loop through all edge-Connections and call this method for each
   // TODO: maybe add a new layer to draw the edge on, to avoid conflictions when rendering multiple edges
   findPath(startCell, targetCell) {
-    // const startCell = this.grid.getCell(startCellPos.x, startCellPos.y);
-    // const targetCell = this.grid.getCell(targetCellPos.x, targetCellPos.y);
-
-    console.log(targetCell);
 
     startCell.state = "START";
     targetCell.state = "END";
@@ -24,7 +20,7 @@ export class PathFinder {
     // TODO: need to draw each cell for the startNode, as a node can cover multiple cells
     startCell.draw(this.context, this.cellDim, this.cellDim, startCell.state);
     targetCell.draw(this.context, this.cellDim, this.cellDim, targetCell.state);
-    return;
+    // return;
     // add starting node to Open Set
     this.openSet.push(startCell);
 
@@ -59,8 +55,8 @@ export class PathFinder {
       if (currentCell !== startCell && currentCell !== targetCell) {
         currentCell.draw(
           this.context,
-          100,
-          100,
+          this.cellDim,
+          this.cellDim,
           currentCell.state,
           `${currentCell.gCost}, ${currentCell.hCost} = ${currentCell.gCost + currentCell.hCost}`
         );
@@ -98,8 +94,8 @@ export class PathFinder {
           // draw label on cell
           neighbourCell.draw(
             this.context,
-            100,
-            100,
+            this.cellDim, // previously 100
+            this.cellDim,
             neighbourCell.state,
             `${neighbourCell.gCost}, ${neighbourCell.hCost} = ${neighbourCell.gCost + neighbourCell.hCost}`
           );
@@ -108,8 +104,8 @@ export class PathFinder {
         } else {
           neighbourCell.draw(
             this.context,
-            100,
-            100,
+            this.cellDim,
+            this.cellDim,
             neighbourCell.state,
             `${neighbourCell.gCost}, ${neighbourCell.hCost} = ${neighbourCell.gCost + neighbourCell.hCost}`
           );
@@ -167,8 +163,8 @@ export class PathFinder {
         // console.log(currentCell);
         currentCell.draw(
           this.context,
-          100,
-          100,
+          this.cellDim,
+          this.cellDim,
           currentCell.state,
           `${currentCell.gCost}, ${currentCell.hCost} = ${currentCell.gCost + currentCell.hCost}`
         );
@@ -188,13 +184,13 @@ export class PathFinder {
 
     // remove labels, markings of other cells
     for (let cell of this.openSet) {
-      cell.clearCell(this.context, 100, 100);
+      cell.clearCell(this.context, this.cellDim, this.cellDim);
     }
 
     for (let cell of this.closedSet) {
       if (cell.state !== "START" && cell.state !== "END") {
         // cell.state !== "FINISHED" &&
-        cell.clearCell(this.context, 100, 100);
+        cell.clearCell(this.context, this.cellDim, this.cellDim);
       }
     }
 
@@ -223,7 +219,7 @@ export class PathFinder {
     const firstCell = path[0];
     const secondCell = path[1];
 
-    let { startX, startY } = this.getStartCoordinates(firstCell, secondCell, 100, 100);
+    let { startX, startY } = this.getStartCoordinates(firstCell, secondCell, this.cellDim, this.cellDim);
     console.log("start X, Y", startX, startY);
 
     ctx.moveTo(startX, startY);
@@ -241,7 +237,7 @@ export class PathFinder {
     // do this for starting point as well. I believe it should be slightly different. Because direction will not be IN going TO the last cell
     // but OUTgoing FROM the start cell
 
-    let { endX, endY } = this.getEndCoordinates(lastCell, secondLastCell, 100, 100);
+    let { endX, endY } = this.getEndCoordinates(lastCell, secondLastCell, this.cellDim, this.cellDim);
     console.log("end X, Y", endX, endY);
 
     ctx.lineTo(endX, endY);
