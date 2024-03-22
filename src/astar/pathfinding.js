@@ -22,8 +22,8 @@ export class PathFinder {
     targetCell.state = "END";
 
     // TODO: need to draw each cell for the startNode, as a node can cover multiple cells
-    startCell.draw(this.context, 100, 100, startCell.state);
-    targetCell.draw(this.context, 100, 100, targetCell.state);
+    startCell.draw(this.context, this.cellDim, this.cellDim, startCell.state);
+    targetCell.draw(this.context, this.cellDim, this.cellDim, targetCell.state);
     return;
     // add starting node to Open Set
     this.openSet.push(startCell);

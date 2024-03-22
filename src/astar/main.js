@@ -98,17 +98,11 @@ window.addEventListener("load", () => {
       let resultStartCells = combineCells(startingCells);
       let resultTargetCells = combineCells(targetingCells);
 
-      // TODO: need to specify the actual starting Cell now, because now I have multiple cells
-      // of course for one node.
-
-      
-
-
       // get all cells of starting node
-      resultStartCells = resultStartCells.map(obj => {
+      resultStartCells = resultStartCells.map((obj) => {
         return grid.getCell(obj.x / cellDim, obj.y / cellDim);
       });
-      resultTargetCells = resultTargetCells.map(obj => {
+      resultTargetCells = resultTargetCells.map((obj) => {
         // console.log(grid.getCell(obj.x / 50, obj.y / 50)); // cellDim = 50;
         return grid.getCell(obj.x / cellDim, obj.y / cellDim);
       });
@@ -116,17 +110,15 @@ window.addEventListener("load", () => {
       console.log("resultStartCells: ", resultStartCells);
       console.log("resultTargetCells: ", resultTargetCells);
 
+      // TODO: specify the starting Cell -> function
+      // TODO: start Coordinates of starting cell -> function
+      // -> calculate docking point by the angle, the edge is coming at
 
+      // specify start and target cells of the start and target Nodes
+      let startCell = specifyCell(resultStartCells)
+      let targetCell = specifyCell(resultTargetCells) 
 
       console.log("");
-      console.log("");
-      const startCell = grid.getCell(startCellPos.x, startCellPos.y); // this is just getting one Cell
-      const targetCell = grid.getCell(targetCellPos.x, targetCellPos.y);
-
-      startCell.state = "START";
-      targetCell.state = "END";
-      startCell.draw(this.context, 50, 50, startCell.state);
-      targetCell.draw(this.context, 50, 50, targetCell.state);
 
       a_star.findPath(startCell, targetCell);
 
@@ -136,8 +128,8 @@ window.addEventListener("load", () => {
       // startCell.state = "OBSTACLE";
       // targetCell.state = "OBSTACLE";
       // // draw nodes and obstacles again before executing net iteration (in main.js)
-      // startCell.draw(ctx, 100, 100, startCell.state);
-      // targetCell.draw(ctx, 100, 100, targetCell.state);
+      // startCell.draw(ctx, cellDim, cellDim, startCell.state);
+      // targetCell.draw(ctx, cellDim, cellDim, targetCell.state);
 
       redrawGraph(nodeCoordinates); // re-draw the ndoes on the graph for next iteration
     });
@@ -145,8 +137,15 @@ window.addEventListener("load", () => {
     // draw all the paths at once
     console.log("drawing all paths");
     console.log(a_star.paths);
-    a_star.drawAllPaths(ctx, a_star.paths, 100, 100);
+    a_star.drawAllPaths(ctx, a_star.paths, cellDim, cellDim);
   }
+
+  function specifyCell(availableCells) {
+    return availableCells[0];
+  }
+
+
+
 
   function combineCells(arrayOfObjects) {
     let resultCells = [];
