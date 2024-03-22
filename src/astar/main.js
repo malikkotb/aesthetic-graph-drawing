@@ -112,7 +112,8 @@ window.addEventListener("load", () => {
 
       // TODO: specify the starting Cell -> function
       // TODO: start Coordinates of starting cell -> function
-      // -> calculate docking point by the angle, the edge is coming at
+
+      // TODO: -> Future: calculate docking point by the angle, the edge is coming at
 
       // specify start and target cells of the start and target Nodes
       let startCell = specifyCell(resultStartCells)
@@ -122,9 +123,7 @@ window.addEventListener("load", () => {
 
       a_star.findPath(startCell, targetCell);
 
-      // TODO: commented out for testing:
       // set START and END cells back to "OBSTACLE" for next iteration of a*
-      console.log("startCell: ", grid.getCell(startCellPos.x, startCellPos.y));
       startCell.state = "OBSTACLE";
       targetCell.state = "OBSTACLE";
       // draw nodes and obstacles again before executing net iteration (in main.js)
@@ -141,6 +140,14 @@ window.addEventListener("load", () => {
   }
 
   function specifyCell(availableCells) {
+    // TODO: calculate the correct starting cell of a node 
+    // This way, the user can specify which nodes should be connected,
+    // by selecting the top-left-corner of a node and the rest will be handled
+    // by the algorithm
+
+    console.log("availableCells", availableCells);
+
+
     return availableCells[0];
   }
 
@@ -188,7 +195,6 @@ window.addEventListener("load", () => {
       // Find the nodes in the nodes array using their coordinates
       let startNode = nodes.find((node) => node.x === x1 && node.y === y1);
       let targetNode = nodes.find((node) => node.x === x2 && node.y === y2);
-
       // Check if both nodes are found
       if (startNode && targetNode) {
         // Apply logic to connect nodes (e.g., draw a line between them)

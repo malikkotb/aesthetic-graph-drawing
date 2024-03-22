@@ -13,7 +13,6 @@ export class PathFinder {
   // TODO: will have to loop through all edge-Connections and call this method for each
   // TODO: maybe add a new layer to draw the edge on, to avoid conflictions when rendering multiple edges
   findPath(startCell, targetCell) {
-
     startCell.state = "START";
     targetCell.state = "END";
 
@@ -23,8 +22,6 @@ export class PathFinder {
     // return;
     // add starting node to Open Set
     this.openSet.push(startCell);
-
-    let count = 0;
 
     while (this.openSet.length > 0) {
       let currentCell = this.openSet[0]; // current node with lowest f_cost
@@ -111,10 +108,6 @@ export class PathFinder {
           );
         }
       }
-
-      if (count === 19) return;
-
-      count++;
     }
   }
 
@@ -261,6 +254,7 @@ export class PathFinder {
       const secondCell = path[1];
 
       let { startX, startY } = this.getStartCoordinates(firstCell, secondCell, cellWidth, cellHeight);
+      console.log("startCoordinates: ", startX, startY);
       ctx.moveTo(startX, startY);
 
       for (let i = 1; i < path.length - 1; i++) {
@@ -274,8 +268,14 @@ export class PathFinder {
 
       let { endX, endY } = this.getEndCoordinates(lastCell, secondLastCell, cellWidth, cellHeight);
       ctx.lineTo(endX, endY);
+      console.log("edgeIndex ",this.edgeIndex);
+      if (this.edgeIndex == 0) {
+        ctx.strokeStyle = "green";
+      } else {
+        ctx.strokeStyle = "red";
+      }
+      this.edgeIndex++;
     }
-
     ctx.stroke();
   }
 
@@ -295,10 +295,10 @@ export class PathFinder {
     let adjustment = "";
     switch (direction) {
       case "up":
-        adjustment = "middleBottom";
+        adjustment = "middleTop";
         break;
       case "down":
-        adjustment = "middleTop";
+        adjustment = "middleBottom";
         break;
       case "right":
         adjustment = "middleLeft";
