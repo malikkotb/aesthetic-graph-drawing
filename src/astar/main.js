@@ -147,6 +147,22 @@ window.addEventListener("load", () => {
 
     console.log("availableCells", availableCells);
 
+    // TODO: check obstacles, and then select reasonable first cell in path
+
+    // TODO: calculate shortest path to each and then select shortest path ?
+
+    // calculate how many edges are going out of this node
+    // then set standards for what cells of a node to choose depending
+    // on the length of the side of the particular node
+
+    // Docking points:
+    // i.e. length of a side is 3 cells and the edge is incoming: possible cells are the outer ones
+    // and then the points on that cell are the inner corners
+
+    // if the edge is outgoing it should usually come from the middle of the middle cell
+    // - so with even length sides: on the corner of the cell that is next to the middle
+    // - for odd length sides: in the middle of the middle cell
+
 
     return availableCells[0];
   }
