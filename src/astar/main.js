@@ -66,11 +66,6 @@ window.addEventListener("load", () => {
     edgeConnections.map((edge) => {
       // TODO: make applicable for nodes covering multiple cells, right now this is for 1 node corresponding to 1 cell
 
-      // Corresponding Cell -> coordinates in grid
-      const startCellPos = { x: edge.startNode.x / 100, y: edge.startNode.y / 100 };
-      const targetCellPos = { x: edge.targetNode.x / 100, y: edge.targetNode.y / 100 };
-      console.log("edge.startNode", edge);
-
       // array of cells covered by starting and target node
       let startingCells = [];
       let targetingCells = [];
@@ -107,17 +102,14 @@ window.addEventListener("load", () => {
         return grid.getCell(obj.x / cellDim, obj.y / cellDim);
       });
 
-      console.log("resultStartCells: ", resultStartCells);
-      console.log("resultTargetCells: ", resultTargetCells);
-
       // TODO: specify the starting Cell -> function
       // TODO: start Coordinates of starting cell -> function
 
-      // TODO: -> Future: calculate docking point by the angle, the edge is coming at
+      // TODO: -> maybe: calculate docking point by the angle, the edge is coming at
 
       // specify start and target cells of the start and target Nodes
-      let startCell = specifyCell(resultStartCells)
-      let targetCell = specifyCell(resultTargetCells) 
+      let startCell = specifyCell(resultStartCells);
+      let targetCell = specifyCell(resultTargetCells);
 
       console.log("");
 
@@ -139,8 +131,14 @@ window.addEventListener("load", () => {
     a_star.drawAllPaths(ctx, a_star.paths, cellDim, cellDim);
   }
 
+  function drawObstaclePath() {
+    // function to draw an obstacle path, before actually running the a-start algorithm.
+    // so a path of intermediate obstacles that are rendered briefly before running A* and then removed again right after
+  }
+
   function specifyCell(availableCells) {
-    // TODO: calculate the correct starting cell of a node 
+    // TODO: calculate the correct starting cell of node for outgoing edge
+    // TODO: and calculate correct ending cell of node for incoming edge
     // This way, the user can specify which nodes should be connected,
     // by selecting the top-left-corner of a node and the rest will be handled
     // by the algorithm
@@ -149,7 +147,11 @@ window.addEventListener("load", () => {
 
     // TODO: check obstacles, and then select reasonable first cell in path
 
-    // TODO: calculate shortest path to each and then select shortest path ?
+    // TODO: calculate shortest path to each cell and then select shortest path ?
+
+    // note: the actual nodes will probably only have limited obstacles
+    // exactly next to them; or it depends as I could also directly
+    // using obstacles cells for paving the way kind of
 
     // calculate how many edges are going out of this node
     // then set standards for what cells of a node to choose depending
@@ -163,10 +165,8 @@ window.addEventListener("load", () => {
     // - so with even length sides: on the corner of the cell that is next to the middle
     // - for odd length sides: in the middle of the middle cell
 
-
-    return availableCells[0];
+    return availableCells[2];
   }
-
 
   function combineCells(arrayOfObjects) {
     let resultCells = [];
