@@ -104,11 +104,8 @@ window.addEventListener("load", () => {
       // TODO: specify the starting Cell -> function
       // TODO: start Coordinates of starting cell -> function
 
-      // TODO: -> maybe: calculate docking point by the angle, the edge is coming at
-
       // specify start and target cells of the start and target Nodes
-      let startCell = specifyCell(resultStartCells);
-      let targetCell = specifyCell(resultTargetCells);
+      const { startCell, targetCell } = specifyCell(resultStartCells, resultTargetCells);
 
       a_star.findPath(startCell, targetCell);
 
@@ -132,30 +129,55 @@ window.addEventListener("load", () => {
   function drawObstaclePath() {
     // function to draw an obstacle path, before actually running the a-start algorithm.
     // so a path of intermediate obstacles that are rendered briefly before running A* and then removed again right after
+    // note: the actual nodes will probably only have limited obstacles
+    // exactly next to them; or it depends, as I could also directly
+    // using obstacles cells for paving the way kind of
   }
 
-  function specifyCell(availableCells) {
-    // TODO: calculate the correct starting cell of node for outgoing edge
-    // TODO: and calculate correct ending cell of node for incoming edge
+  function specifyCell(startCells, targetCells) {
+    // Calculate shortest distance in terms of h-cost (from all available start cells and all available target cells) and return
+    // that combination of start and target cells
+    // using a_star.getDistance() method.
     // This way, the user can specify which nodes should be connected,
     // by selecting the top-left-corner of a node and the rest will be handled
     // by the algorithm
 
-    console.log("availableCells", availableCells);
-  
+    const distances = [];
 
-    // TODO: check obstacles, and then select reasonable first cell in path
+    for (let i = 0; i < startCells.length; i++) {
+      for (let j = 0; j < targetCells.length; j++) {
+        const distance = a_star.getDistance(startCells[i], targetCells[j]);
+        const distanceObject = {
+          distance: distance,
+          startCell: startCells[i],
+          targetCell: targetCells[j],
+        };
+        distances.push(distanceObject);
+      }
+    }
 
-    // TODO: calculate shortest path to each cell and then select shortest path ?
+    // Initialize variables to store the object with the smallest distance
+    let smallestDistanceObject = null;
+    let smallestDistance = Infinity; // Start with a very large value
 
-    // TODO: or calculate shortest distance in terms of h-cost (from all available start cells and all available target cells) and return 
-    // that combination of start and target cells
-    // using pathfinding.getDistance() method
+    // Iterate over each object in the distances array
+    for (const distanceObject of distances) {
+      // Check if the current distance is smaller than the smallest recorded distance
+      if (distanceObject.distance < smallestDistance) {
+        // If so, update the smallest distance and the corresponding object
+        smallestDistance = distanceObject.distance;
+        smallestDistanceObject = distanceObject;
+      }
+    }
 
-    // note: the actual nodes will probably only have limited obstacles
-    // exactly next to them; or it depends, as I could also directly
-    // using obstacles cells for paving the way kind of
+    console.log(smallestDistanceObject);
 
+    let startCell = smallestDistanceObject.startCell;
+    let targetCell = smallestDistanceObject.targetCell;
+
+    return { startCell, targetCell };
+
+    // TODO:
     // calculate how many edges are going out of this node
     // then set standards for what cells of a node to choose depending
     // on the length of the side of the particular node
@@ -167,8 +189,6 @@ window.addEventListener("load", () => {
     // if the edge is outgoing it should usually come from the middle of the middle cell
     // - so with even length sides: on the corner of the cell that is next to the middle
     // - for odd length sides: in the middle of the middle cell
-
-    return availableCells[2];
   }
 
   function combineCells(arrayOfObjects) {
