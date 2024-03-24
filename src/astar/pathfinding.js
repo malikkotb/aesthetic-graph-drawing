@@ -173,7 +173,6 @@ export class PathFinder {
     path.reverse();
 
     this.grid.path = path;
-    console.log("path", path);
 
     // remove labels, markings of other cells
     for (let cell of this.openSet) {
@@ -197,14 +196,11 @@ export class PathFinder {
     // adding the new path to allPaths to render them at the end simulatneously. Another workaround could be adding multiple canvas layers.
     this.paths.push(path);
 
-    console.log("");
-    console.log("");
-    console.log("");
+
   }
 
   // draw edge
   drawPath(ctx, path, cellWidth, cellHeight) {
-    if (this.edgeIndex > 0) return;
     if (path.length < 2) return;
 
     ctx.beginPath();
@@ -213,7 +209,6 @@ export class PathFinder {
     const secondCell = path[1];
 
     let { startX, startY } = this.getStartCoordinates(firstCell, secondCell, this.cellDim, this.cellDim);
-    console.log("start X, Y", startX, startY);
 
     ctx.moveTo(startX, startY);
 
@@ -231,16 +226,10 @@ export class PathFinder {
     // but OUTgoing FROM the start cell
 
     let { endX, endY } = this.getEndCoordinates(lastCell, secondLastCell, this.cellDim, this.cellDim);
-    console.log("end X, Y", endX, endY);
 
     ctx.lineTo(endX, endY);
-    if (this.edgeIndex === 0) {
-      ctx.strokeStyle = "red";
-    } else {
-      ctx.strokeStyle = "lightgreen";
-    }
+   
     ctx.stroke();
-    this.edgeIndex++;
   }
 
   // different apporach, drawing all paths at once
@@ -254,7 +243,7 @@ export class PathFinder {
       const secondCell = path[1];
 
       let { startX, startY } = this.getStartCoordinates(firstCell, secondCell, cellWidth, cellHeight);
-      console.log("startCoordinates: ", startX, startY);
+      // console.log("startCoordinates: ", startX, startY);
       ctx.moveTo(startX, startY);
 
       for (let i = 1; i < path.length - 1; i++) {
@@ -268,13 +257,6 @@ export class PathFinder {
 
       let { endX, endY } = this.getEndCoordinates(lastCell, secondLastCell, cellWidth, cellHeight);
       ctx.lineTo(endX, endY);
-      console.log("edgeIndex ",this.edgeIndex);
-      if (this.edgeIndex == 0) {
-        ctx.strokeStyle = "green";
-      } else {
-        ctx.strokeStyle = "red";
-      }
-      this.edgeIndex++;
     }
     ctx.stroke();
   }
@@ -285,7 +267,6 @@ export class PathFinder {
     let directionY = secondCell.y - firstCell.y;
 
     const direction = this.getDirection(directionX, directionY);
-    console.log("startDirection: ", direction);
 
     const leftObstacle = this.grid.getCell(firstCell.x - 1, firstCell.y).state === "OBSTACLE";
     const rightObstacle = this.grid.getCell(firstCell.x + 1, firstCell.y).state === "OBSTACLE";

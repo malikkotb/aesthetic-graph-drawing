@@ -21,6 +21,8 @@ window.addEventListener("load", () => {
   let grid = null;
   let paths = [];
 
+  let a_star = null;
+
   // get state and edge configuration from input
   document.getElementById("updateButton").addEventListener("click", updateGraph);
 
@@ -62,7 +64,7 @@ window.addEventListener("load", () => {
   }
 
   function findPath() {
-    const a_star = new PathFinder(ctx, grid, cellDim);
+    a_star = new PathFinder(ctx, grid, cellDim);
     edgeConnections.map((edge) => {
       // TODO: make applicable for nodes covering multiple cells, right now this is for 1 node corresponding to 1 cell
 
@@ -74,17 +76,14 @@ window.addEventListener("load", () => {
         // loop for cells in x direction of startNode
         startingCells.push({ x: i });
       }
-
       for (let i = edge.startNode.y; i < edge.startNode.y + edge.startNode.height; i += cellDim) {
         // loop for cells in y direction of startNode
         startingCells.push({ y: i });
       }
-
       for (let i = edge.targetNode.x; i < edge.targetNode.x + edge.targetNode.width; i += cellDim) {
         // loop for cells in x direction of targetNode
         targetingCells.push({ x: i });
       }
-
       for (let i = edge.targetNode.y; i < edge.targetNode.y + edge.targetNode.height; i += cellDim) {
         // loop for cells in y direction of targetNode
         targetingCells.push({ y: i });
@@ -111,8 +110,6 @@ window.addEventListener("load", () => {
       let startCell = specifyCell(resultStartCells);
       let targetCell = specifyCell(resultTargetCells);
 
-      console.log("");
-
       a_star.findPath(startCell, targetCell);
 
       // set START and END cells back to "OBSTACLE" for next iteration of a*
@@ -123,6 +120,7 @@ window.addEventListener("load", () => {
       targetCell.draw(ctx, cellDim, cellDim, targetCell.state);
 
       redrawGraph(nodeCoordinates); // re-draw the ndoes on the graph for next iteration
+      console.log("");
     });
 
     // draw all the paths at once
@@ -144,13 +142,18 @@ window.addEventListener("load", () => {
     // by the algorithm
 
     console.log("availableCells", availableCells);
+  
 
     // TODO: check obstacles, and then select reasonable first cell in path
 
     // TODO: calculate shortest path to each cell and then select shortest path ?
 
+    // TODO: or calculate shortest distance in terms of h-cost (from all available start cells and all available target cells) and return 
+    // that combination of start and target cells
+    // using pathfinding.getDistance() method
+
     // note: the actual nodes will probably only have limited obstacles
-    // exactly next to them; or it depends as I could also directly
+    // exactly next to them; or it depends, as I could also directly
     // using obstacles cells for paving the way kind of
 
     // calculate how many edges are going out of this node
