@@ -132,6 +132,24 @@ window.addEventListener("load", () => {
     // note: the actual nodes will probably only have limited obstacles
     // exactly next to them; or it depends, as I could also directly
     // using obstacles cells for paving the way kind of
+
+
+    // USING CUBIC BEZIER SPLINES:
+    // the corners of shortest path can represent the control points.
+    // A spline then generates individual curves based on those control points,
+    // where each curve is effectively using its own math function.
+    // These curves meet end-to-end at points called joins/knots. 
+    // These joins will lie on the control points. 
+    // Each curve is then assigned an interval in the input parameter space
+    // that helps me associate any given input u value to a curve.  
+
+
+
+    // (There will be obstacles along the path, but I have to make other
+    // edges also be some kind of intermediate obstacles to influence the path.)
+    // As we want as few edge crossing as possible.
+    // I need to include the variables in the selection of the best path.
+    // Such as number of edge crossings.
   }
 
   function specifyCell(startCells, targetCells) {

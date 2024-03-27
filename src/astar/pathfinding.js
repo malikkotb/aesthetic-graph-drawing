@@ -558,7 +558,7 @@ export class PathFinder {
     // => equation:
     // if x > y
     // 14y + 10(x-y)
-    // ...else if y > x
+    // ...else if y > x 
     // 14x + 10(y-x)
 
     let distanceX = Math.abs(cellA.x - cellB.x);
