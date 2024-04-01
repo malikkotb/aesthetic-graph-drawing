@@ -1,5 +1,7 @@
+import Delaunator from "https://cdn.skypack.dev/delaunator@5.0.0";
 import { Grid } from "./grid.js";
 import { PathFinder } from "./pathfinding.js";
+// import Delaunator from "delaunator";
 window.addEventListener("load", () => {
   const canvas = document.querySelector("#grid");
   // define what context we are working in
@@ -22,6 +24,32 @@ window.addEventListener("load", () => {
   let paths = [];
 
   let a_star = null;
+
+  // let points = [[168, 180], [168, 178], [167, 183], [167, 184], [165, 184], [162, 186], [164, 188], [161, 188], [160, 191], [158, 193], [156, 193], [152, 195], [152, 198], [236, 220], [230, 223], [230, 213], [175, 32], [172, 32], [171, 38], [184, 30]];
+  let points = [
+    [100, 100],
+    [800, 200],
+    [250, 300],
+    [600, 400],
+  ];
+  const delaunay = Delaunator.from(points);
+  console.log(delaunay.triangles);
+  let triangles = delaunay.triangles
+  let triangleCoordinates = [];
+  for (let i = 0; i < triangles.length; i += 3) {
+    triangleCoordinates.push([points[triangles[i]], points[triangles[i + 1]], points[triangles[i + 2]]]);
+  }
+  // TODO: add a canvas alyer for visualization of the triangle mesh
+  triangleCoordinates.forEach(t => {
+    ctx.beginPath();
+    ctx.moveTo(t[0][0], t[0][1]);
+    ctx.lineTo(t[1][0], t[1][1]);
+    ctx.lineTo(t[2][0], t[2][1]);
+    ctx.closePath();
+    ctx.stroke();
+  });
+
+  console.log(triangleCoordinates);
 
   // get state and edge configuration from input
   document.getElementById("updateButton").addEventListener("click", updateGraph);
@@ -116,7 +144,7 @@ window.addEventListener("load", () => {
       startCell.draw(ctx, cellDim, cellDim, startCell.state);
       targetCell.draw(ctx, cellDim, cellDim, targetCell.state);
 
-      redrawGraph(nodeCoordinates); // re-draw the ndoes on the graph for next iteration
+      redrawGraph(nodeCoordinates); // re-draw the nodes on the graph for next iteration
       console.log("");
     });
 
@@ -124,32 +152,6 @@ window.addEventListener("load", () => {
     console.log("drawing all paths");
     console.log(a_star.paths);
     a_star.drawAllPaths(ctx, a_star.paths, cellDim, cellDim);
-  }
-
-  function drawObstaclePath() {
-    // function to draw an obstacle path, before actually running the a-start algorithm.
-    // so a path of intermediate obstacles that are rendered briefly before running A* and then removed again right after
-    // note: the actual nodes will probably only have limited obstacles
-    // exactly next to them; or it depends, as I could also directly
-    // using obstacles cells for paving the way kind of
-
-
-    // USING CUBIC BEZIER SPLINES:
-    // the corners of shortest path can represent the control points.
-    // A spline then generates individual curves based on those control points,
-    // where each curve is effectively using its own math function.
-    // These curves meet end-to-end at points called joins/knots. 
-    // These joins will lie on the control points. 
-    // Each curve is then assigned an interval in the input parameter space
-    // that helps me associate any given input u value to a curve.  
-
-
-
-    // (There will be obstacles along the path, but I have to make other
-    // edges also be some kind of intermediate obstacles to influence the path.)
-    // As we want as few edge crossing as possible.
-    // I need to include the variables in the selection of the best path.
-    // Such as number of edge crossings.
   }
 
   function specifyCell(startCells, targetCells) {
