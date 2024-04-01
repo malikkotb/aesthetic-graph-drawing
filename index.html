@@ -25,7 +25,12 @@
       <button id="updateButton" style="padding: 5px">Update Graph</button>
       <button id="findPathBtn" style="padding: 5px">Find Path</button>
     </div>
-    <canvas id="grid"></canvas>
+    <div class="canvas-container">
+      <canvas id="grid" width="400" height="400" style="z-index: 1;"></canvas>
+      <canvas id="layer1" width="400" height="400" style="z-index: 2;"></canvas>
+    </div>
+    <!-- <canvas id="grid" style="z-index: 1;"></canvas>
+    <canvas id="layer1" style="z-index: 2;"></canvas> -->
     <script type="module" src="src/astar/main.js">
       import Delaunator from 'https://cdn.skypack.dev/delaunator@5.0.0';
     </script>

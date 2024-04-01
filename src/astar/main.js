@@ -25,7 +25,13 @@ window.addEventListener("load", () => {
 
   let a_star = null;
 
-  // let points = [[168, 180], [168, 178], [167, 183], [167, 184], [165, 184], [162, 186], [164, 188], [161, 188], [160, 191], [158, 193], [156, 193], [152, 195], [152, 198], [236, 220], [230, 223], [230, 213], [175, 32], [172, 32], [171, 38], [184, 30]];
+
+  // Triangulation Canvas Layer
+  const triangleCanvas = document.querySelector("#layer1")
+  const ctx2 = triangleCanvas.getContext("2d");
+  triangleCanvas.height = 1000;
+  triangleCanvas.width = 1000;
+
   let points = [
     [100, 100],
     [800, 200],
@@ -41,12 +47,13 @@ window.addEventListener("load", () => {
   }
   // TODO: add a canvas alyer for visualization of the triangle mesh
   triangleCoordinates.forEach(t => {
-    ctx.beginPath();
-    ctx.moveTo(t[0][0], t[0][1]);
-    ctx.lineTo(t[1][0], t[1][1]);
-    ctx.lineTo(t[2][0], t[2][1]);
-    ctx.closePath();
-    ctx.stroke();
+    ctx2.beginPath();
+    ctx2.moveTo(t[0][0], t[0][1]);
+    ctx2.lineTo(t[1][0], t[1][1]);
+    ctx2.lineTo(t[2][0], t[2][1]);
+    ctx2.closePath();
+    ctx2.strokeStyle = "green"
+    ctx2.stroke();
   });
 
   console.log(triangleCoordinates);
