@@ -25,9 +25,8 @@ window.addEventListener("load", () => {
 
   let a_star = null;
 
-
   // Triangulation Canvas Layer
-  const triangleCanvas = document.querySelector("#layer1")
+  const triangleCanvas = document.querySelector("#layer1");
   const ctx2 = triangleCanvas.getContext("2d");
   triangleCanvas.height = 1000;
   triangleCanvas.width = 1000;
@@ -38,25 +37,7 @@ window.addEventListener("load", () => {
     [250, 300],
     [600, 400],
   ];
-  const delaunay = Delaunator.from(points);
-  console.log(delaunay.triangles);
-  let triangles = delaunay.triangles
-  let triangleCoordinates = [];
-  for (let i = 0; i < triangles.length; i += 3) {
-    triangleCoordinates.push([points[triangles[i]], points[triangles[i + 1]], points[triangles[i + 2]]]);
-  }
-  // TODO: add a canvas alyer for visualization of the triangle mesh
-  triangleCoordinates.forEach(t => {
-    ctx2.beginPath();
-    ctx2.moveTo(t[0][0], t[0][1]);
-    ctx2.lineTo(t[1][0], t[1][1]);
-    ctx2.lineTo(t[2][0], t[2][1]);
-    ctx2.closePath();
-    ctx2.strokeStyle = "green"
-    ctx2.stroke();
-  });
-
-  console.log(triangleCoordinates);
+  document.getElementById("triangleMeshBtn").addEventListener("click", () => drawDelaunayTriangles(points, ctx2));
 
   // get state and edge configuration from input
   document.getElementById("updateButton").addEventListener("click", updateGraph);
@@ -96,6 +77,43 @@ window.addEventListener("load", () => {
 
     grid = new Grid(ctx, gridWidth, gridHeight, nodeCoordinates, canvas.height); // Create the grid
     redrawGraph(nodeCoordinates); // draw nodes
+  }
+
+  function drawDelaunayTriangles(points, ctx) {
+    const delaunay = Delaunator.from(points);
+    let triangles = delaunay.triangles;
+    let triangleCoordinates = [];
+    for (let i = 0; i < triangles.length; i += 3) {
+      triangleCoordinates.push([points[triangles[i]], points[triangles[i + 1]], points[triangles[i + 2]]]);
+    }
+    console.log(triangleCoordinates);
+    triangleCoordinates.forEach((t) => {
+      ctx.beginPath();
+      ctx.moveTo(t[0][0], t[0][1]);
+      ctx.lineTo(t[1][0], t[1][1]);
+      ctx.lineTo(t[2][0], t[2][1]);
+      ctx.closePath();
+      ctx.strokeStyle = "green";
+      ctx.stroke();
+    });
+
+    // convex hull of the points
+    let hull = delaunay.hull;
+    let hullCoordiantes = [];
+
+    for (let i = 0; i < hull.length; i++) {
+      hullCoordiantes.push(points[hull[i]]);
+    }
+    console.log(hullCoordiantes);
+    ctx.beginPath();
+    ctx.moveTo(hullCoordiantes[0][0] + 2, hullCoordiantes[0][1] + 2);
+
+    hullCoordiantes.forEach((h) => {
+      ctx.lineTo(h[0] + 2, h[1] + 2)
+    });
+    ctx.closePath();
+    ctx.strokeStyle = "red"
+    ctx.stroke();
   }
 
   function findPath() {
