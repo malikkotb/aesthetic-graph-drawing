@@ -20,6 +20,9 @@ window.addEventListener("load", () => {
   let nodeCoordinates = [];
   let edgeConnections = [];
 
+  const nodeInput = document.getElementById("nodeInput").value;
+  const edgeInput = document.getElementById("edgeInput").value;
+
   let grid = null;
   let paths = [];
 
@@ -31,12 +34,7 @@ window.addEventListener("load", () => {
   triangleCanvas.height = 1000;
   triangleCanvas.width = 1000;
 
-  let points = [
-    [100, 100],
-    [800, 200],
-    [250, 300],
-    [600, 400],
-  ];
+  let points = processNodeInputForTriangulation(nodeInput);
   document.getElementById("triangleMeshBtn").addEventListener("click", () => drawDelaunayTriangles(points, ctx2));
 
   // get state and edge configuration from input
@@ -69,10 +67,7 @@ window.addEventListener("load", () => {
   ///// end of popup button config
 
   function updateGraph() {
-    const nodeInput = document.getElementById("nodeInput").value;
     if (nodeInput) processNodeInput(nodeInput);
-
-    const edgeInput = document.getElementById("edgeInput").value;
     if (edgeInput) applyUserConnections(nodeCoordinates, edgeInput); // get Edge-Connection configs from user input
 
     grid = new Grid(ctx, gridWidth, gridHeight, nodeCoordinates, canvas.height); // Create the grid
@@ -86,15 +81,26 @@ window.addEventListener("load", () => {
     for (let i = 0; i < triangles.length; i += 3) {
       triangleCoordinates.push([points[triangles[i]], points[triangles[i + 1]], points[triangles[i + 2]]]);
     }
-    console.log(triangleCoordinates);
+
+    ctx.globalAlpha = 0.5;
+
     triangleCoordinates.forEach((t) => {
       ctx.beginPath();
       ctx.moveTo(t[0][0], t[0][1]);
       ctx.lineTo(t[1][0], t[1][1]);
       ctx.lineTo(t[2][0], t[2][1]);
       ctx.closePath();
-      ctx.strokeStyle = "green";
-      ctx.stroke();
+      ctx.fillStyle = getRandomColor();
+      ctx.fill();
+
+      //TODO: calculate centroids and draw them inside the triangle
+      const centroid = calculateCentroid(t[0][0], t[0][1], t[1][0], t[1][1], t[2][0], t[2][1]);
+      const radius = 5;
+      ctx.beginPath();
+      ctx.arc(centroid.x, centroid.y, radius, 0, Math.PI * 2); // Arc centered at (x, y) with radius
+      ctx.fillStyle = 'red'; // Fill color
+      ctx.fill(); // Fill the circle
+
     });
 
     // convex hull of the points
@@ -104,15 +110,14 @@ window.addEventListener("load", () => {
     for (let i = 0; i < hull.length; i++) {
       hullCoordiantes.push(points[hull[i]]);
     }
-    console.log(hullCoordiantes);
     ctx.beginPath();
-    ctx.moveTo(hullCoordiantes[0][0] + 2, hullCoordiantes[0][1] + 2);
+    ctx.moveTo(hullCoordiantes[0][0], hullCoordiantes[0][1]);
 
     hullCoordiantes.forEach((h) => {
-      ctx.lineTo(h[0] + 2, h[1] + 2)
+      ctx.lineTo(h[0], h[1]);
     });
     ctx.closePath();
-    ctx.strokeStyle = "red"
+    ctx.strokeStyle = "red";
     ctx.stroke();
   }
 
@@ -266,6 +271,16 @@ window.addEventListener("load", () => {
     });
   }
 
+  function processNodeInputForTriangulation(nodeInput) {
+    return nodeInput.split(";").map((entry) => {
+      let [x, y] = entry.split(",").map(Number);
+      if (isNaN(x) || isNaN(y)) {
+        throw new Error("Invalid node input");
+      }
+      return [x+50, y+50]; // TODO: change this, as this only represnts the middle of a node if the node is 100x100
+    });
+  }
+
   // Function to parse user input and apply connections
   function applyUserConnections(nodes, edgeInput) {
     // Split the user input by semicolons to separate individual connections
@@ -306,5 +321,19 @@ window.addEventListener("load", () => {
     ctx.beginPath();
     ctx.roundRect(x, y, width, height, [15]);
     ctx.stroke();
+  }
+
+  function getRandomColor() {
+    const color = "#" + Math.floor(Math.random() * 16777215).toString(16); // 16777215 is equivalent to FFFFFF in hexadecimal
+    return color;
+  }
+
+  function calculateCentroid(x1, y1, x2, y2, x3, y3) {
+    const Cx = (x1 + x2 + x3) / 3;
+    const Cy = (y1 + y2 + y3) / 3;
+    // Example usage:
+    // const centroid = calculateCentroid(0, 0, 3, 0, 0, 4);
+    // console.log("Centroid:", centroid); // Output: { Cx: 1, Cy: 1.333 }
+    return { x: Cx, y: Cy };
   }
 });
