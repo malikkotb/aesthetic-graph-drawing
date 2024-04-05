@@ -20,8 +20,8 @@ window.addEventListener("load", () => {
   let nodeCoordinates = [];
   let edgeConnections = [];
 
-  const nodeInput = document.getElementById("nodeInput").value;
-  const edgeInput = document.getElementById("edgeInput").value;
+  let nodeInput = document.getElementById("nodeInput").value;
+  let edgeInput = document.getElementById("edgeInput").value;
 
   let grid = null;
   let paths = [];
@@ -34,8 +34,7 @@ window.addEventListener("load", () => {
   triangleCanvas.height = 1000;
   triangleCanvas.width = 1000;
 
-  let points = processNodeInputForTriangulation(nodeInput);
-  document.getElementById("triangleMeshBtn").addEventListener("click", () => drawDelaunayTriangles(points, ctx2));
+  document.getElementById("triangleMeshBtn").addEventListener("click", () => drawDelaunayTriangles(ctx2));
 
   // get state and edge configuration from input
   document.getElementById("updateButton").addEventListener("click", updateGraph);
@@ -67,6 +66,8 @@ window.addEventListener("load", () => {
   ///// end of popup button config
 
   function updateGraph() {
+    nodeInput = document.getElementById("nodeInput").value;
+    edgeInput = document.getElementById("edgeInput").value;
     if (nodeInput) processNodeInput(nodeInput);
     if (edgeInput) applyUserConnections(nodeCoordinates, edgeInput); // get Edge-Connection configs from user input
 
@@ -74,7 +75,9 @@ window.addEventListener("load", () => {
     redrawGraph(nodeCoordinates); // draw nodes
   }
 
-  function drawDelaunayTriangles(points, ctx) {
+  function drawDelaunayTriangles(ctx) {
+    nodeInput = document.getElementById("nodeInput").value;
+    let points = processNodeInputForTriangulation(nodeInput);
     const delaunay = Delaunator.from(points);
     let triangles = delaunay.triangles;
     let triangleCoordinates = [];
@@ -272,12 +275,13 @@ window.addEventListener("load", () => {
   }
 
   function processNodeInputForTriangulation(nodeInput) {
+    
     return nodeInput.split(";").map((entry) => {
-      let [x, y] = entry.split(",").map(Number);
+      let [x, y,width,height] = entry.split(",").map(Number);
       if (isNaN(x) || isNaN(y)) {
         throw new Error("Invalid node input");
       }
-      return [x+50, y+50]; // TODO: change this, as this only represnts the middle of a node if the node is 100x100
+      return [x + (width/2), y + (height/2)]; // get center of the node (rectangle/square shape)
     });
   }
 
